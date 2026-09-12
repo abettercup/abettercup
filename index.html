@@ -12,11 +12,13 @@
   /* ---- Home-only styling ---- */
   .hero-section{ padding-block: 52px 30px; }
   .hero-grid{
-    display: grid; grid-template-columns: 1.15fr .85fr; gap: 44px; align-items: center;
+    display: grid; grid-template-columns: 1.15fr .85fr; gap: 44px; align-items: start;
   }
   @media (max-width: 900px){ .hero-grid{ grid-template-columns: 1fr; } }
+  .hero-copy{ padding-top: 28px; }
   .hero-copy h1{ font-size: clamp(34px, 5.4vw, 54px); font-weight: 800; line-height: 1.04; }
-  .hero-copy .lead{ color: var(--muted); font-size: 17px; max-width: 48ch; margin-top: 18px; }
+  .hero-copy .tagline{ font-size: 19px; font-weight: 600; color: var(--cherry); margin-top: 10px; }
+  .hero-copy .lead{ color: var(--muted); font-size: 17px; max-width: 48ch; margin-top: 14px; }
   .hero-actions{ display: flex; gap: 12px; flex-wrap: wrap; margin-top: 28px; }
   .hero-copy .eyebrow{ color: var(--ink); font-weight: 700; }
   .hero-copy .eyebrow::before{ background: var(--ink); }
@@ -125,9 +127,10 @@
   <section class="hero-section">
     <div class="wrap hero-grid">
       <div class="hero-copy">
-        <p class="eyebrow">a better cup — Kopi Kekinian</p>
-        <h1>Kopi enak,<br>harga masuk akal.</h1>
-        <p class="lead">Kami meracik kopi susu dan espresso-based dengan biji pilihan dan resep yang konsisten di setiap outlet — supaya ngopi enak bisa jadi kebiasaan harian, bukan cuma sesekali.</p>
+        <p class="eyebrow">Menu Favorit</p>
+        <h1>Butterscotch Sea Salt Cloud</h1>
+        <p class="tagline">Satu tegukan, langsung jadi favorit.</p>
+        <p class="lead">Kelembutan krim cloud berpadu sempurna dengan manisnya butterscotch dan sentuhan gurih sea salt. Rasanya yang unik dan pas bikin momen ngopi enak bisa jadi kebiasaan harian, bukan cuma sesekali.</p>
         <div class="hero-actions">
           <a class="btn btn-primary" href="menu.html">Lihat Menu <span class="btn-icon" aria-hidden="true">→</span></a>
           <a class="btn btn-ghost" href="outlets.html"><span class="btn-icon" aria-hidden="true">📍</span> Temukan Outlet Terdekat</a>
@@ -135,16 +138,16 @@
       </div>
       <div class="hero-visual">
         <div class="hero-photo-frame">
-          <img src="assets/img/hero-drink-cutout.png" alt="Segelas signature kopi susu a better cup yang dingin dan berembun">
+          <img src="assets/img/menu/butterscotch-sea-salt-cloud.png" alt="Butterscotch Sea Salt Cloud, minuman favorit a better cup">
         </div>
         <div class="cup-card cup-card-floating">
           <p class="cc-eyebrow">Catatan Rasa</p>
-          <h3 class="display">Signature Kopi Susu</h3>
-          <p class="cc-note">Body medium-full, asam rendah &amp; lembut, manis pas bisa disesuaikan.</p>
+          <h3 class="display">Butterscotch Sea Salt Cloud</h3>
+          <p class="cc-note">Krim cloud lembut dengan manis butterscotch dan taburan sea salt gurih di atasnya.</p>
           <div class="cup-tags">
-            <span class="pill">Karamel</span>
-            <span class="pill">Cokelat Susu</span>
-            <span class="pill">Kacang Panggang</span>
+            <span class="pill">Butterscotch</span>
+            <span class="pill">Sea Salt</span>
+            <span class="pill">Creamy Cloud</span>
           </div>
         </div>
       </div>
