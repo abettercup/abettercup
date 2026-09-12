@@ -4,35 +4,66 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Menu — a better cup</title>
-<meta name="description" content="Menu kopi susu, kopi klasik, non-kopi, dan camilan a better cup.">
+<meta name="description" content="Menu lengkap a better cup: signature drink, kopi klasik, matcha, chocolate series, tea, sampai pastry.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232c5d42'/%3E%3Cpath d='M9 13h13v6a5 5 0 0 1-5 5h-3a5 5 0 0 1-5-5v-6Z' fill='%23fffcf6'/%3E%3Cpath d='M22 15h1.5a3 3 0 0 1 0 6H22' fill='none' stroke='%23fffcf6' stroke-width='1.6'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap">
 <link rel="stylesheet" href="assets/style.css">
 <style>
-  .draft-note{
-    display:flex; gap:12px; align-items:flex-start; padding: 16px 18px; border-radius: var(--radius-sm);
-    background: var(--gold-soft); border: 1px solid transparent; margin-bottom: 40px;
+  /* ---- quick nav ---- */
+  .quicknav{
+    display:flex; flex-wrap:wrap; gap: 8px 10px; padding: 4px 0 20px;
   }
-  .draft-note svg{ width:18px; height:18px; color: var(--gold); flex-shrink:0; margin-top:2px; }
-  .draft-note p{ font-size: 13.5px; color: var(--ink); line-height:1.55; }
-  .draft-note strong{ color: var(--gold); }
+  .quicknav a{
+    font-size: 12.5px; color: var(--muted); text-decoration:none; padding: 6px 4px;
+    border-bottom: 1.5px solid transparent;
+  }
+  .quicknav a:hover{ color: var(--ink); border-color: var(--line); }
 
-  .menu-cat{ margin-bottom: 56px; }
-  .menu-cat:last-child{ margin-bottom: 0; }
-  .cat-head{ display:flex; align-items:baseline; gap:14px; margin-bottom: 22px; }
-  .cat-head h2{ font-size: 22px; font-weight: 700; }
-  .cat-head .count{ font-family:'Space Mono',monospace; font-size:12px; color:var(--muted); }
-  .cat-head::after{ content:""; flex:1; height:1px; background: var(--line); }
+  /* ---- favorit showcase ---- */
+  .showcase{ padding: 10px 0 34px; border-bottom: 1px solid var(--line); margin-bottom: 12px; }
+  .showcase .kicker{ font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-bottom: 14px; }
+  .showcase-grid{ display:grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
+  @media (max-width: 560px){ .showcase-grid{ grid-template-columns: 1fr 1fr; } }
+  .sc-item{ text-align:left; }
+  .sc-photo{ aspect-ratio: 1/1; border-radius: var(--radius-sm); overflow:hidden; background: var(--surface-2); margin-bottom: 8px; display:flex; align-items:flex-end; justify-content:center; padding-top: 14px; }
+  .sc-photo img{ width:auto; height:100%; max-width:78%; object-fit:contain; }
+  .sc-item h4{ font-size:13px; font-weight:600; margin:0 0 2px; }
+  .sc-item span{ font-size:12px; color:var(--muted); }
 
-  .menu-grid{ display:grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
-  @media (max-width: 900px){ .menu-grid{ grid-template-columns: repeat(2,1fr); } }
-  @media (max-width: 560px){ .menu-grid{ grid-template-columns: 1fr; } }
-  .m-item{ padding: 20px; display:flex; flex-direction:column; gap: 10px; }
-  .m-item .top{ display:flex; justify-content:space-between; gap:10px; align-items:flex-start; }
-  .m-item h3{ font-size: 15.5px; }
-  .m-item .price{ font-family:'Space Mono',monospace; font-weight:700; color: var(--cherry); font-size: 13.5px; white-space:nowrap; }
-  .m-item p{ color: var(--muted); font-size: 13px; line-height: 1.55; flex:1; }
-  .m-item .badges{ display:flex; gap:6px; flex-wrap:wrap; }
+  /* ---- category ---- */
+  .menu-cat{ padding: 40px 0 6px; scroll-margin-top: 20px; }
+  .cat-head{ margin-bottom: 16px; }
+  .cat-head .kicker{ font-family:'Space Mono',monospace; font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-bottom: 6px; display:flex; align-items:center; gap:10px; }
+  .cat-head .kicker .rl{ color: var(--muted); font-weight:400; }
+  .cat-head h2{ font-size: 22px; font-weight:700; margin:0; }
+
+  .m-row{
+    display:flex; align-items:baseline; justify-content:space-between; gap: 18px;
+    padding: 13px 0; border-bottom: 1px solid var(--line);
+  }
+  .m-row:last-child{ border-bottom:none; }
+  .m-name{ display:flex; flex-direction:column; gap:2px; min-width:0; }
+  .m-name .n{ font-size: 15px; font-weight:600; display:flex; align-items:baseline; gap:7px; }
+  .m-name .n .star{ color: var(--gold); font-size:12px; flex-shrink:0; }
+  .m-name .sub{ font-size:12px; color: var(--muted); }
+  .m-price{ font-variant-numeric: tabular-nums; text-align:right; white-space:nowrap; font-size:14px; color: var(--ink); flex-shrink:0; }
+  .m-price .l{ color: var(--muted); }
+  .m-price .sep{ color: var(--line); margin: 0 5px; }
+  .m-price.dual{ display:flex; flex-direction:column; gap:2px; font-size:12.5px; }
+  .m-price.dual .row{ display:flex; gap:6px; justify-content:flex-end; }
+  .m-price.dual .lbl{ color: var(--muted); width:32px; text-align:left; }
+
+  /* ---- pastry ---- */
+  .pastry-row{
+    display:flex; align-items:center; gap:14px; padding: 12px 0; border-bottom:1px solid var(--line);
+  }
+  .pastry-row:last-child{ border-bottom:none; }
+  .pastry-thumb{ width:52px; height:52px; border-radius:999px; overflow:hidden; flex-shrink:0; background:var(--surface-2); }
+  .pastry-thumb img{ width:100%; height:100%; object-fit:cover; }
+  .pastry-info{ flex:1; min-width:0; }
+  .pastry-info h4{ font-size:14.5px; font-weight:600; margin:0 0 2px; }
+  .pastry-info p{ font-size:12.5px; color:var(--muted); margin:0; }
+  .pastry-price{ font-variant-numeric: tabular-nums; font-size:14px; flex-shrink:0; }
 </style>
 </head>
 <body>
@@ -68,91 +99,128 @@
   <section class="page-hero">
     <div class="wrap">
       <p class="eyebrow">Menu</p>
-      <h1>Kopi susu, kopi klasik,<br>dan teman ngobrolnya.</h1>
-      <p class="lead">Semua menu bisa disesuaikan tingkat manis dan level es-nya di outlet.</p>
+      <h1>Nikmati kopi favoritmu, persis sesuai suasana hati.</h1>
+      <p class="lead">Pilihan lengkap untuk tiap suasana. Disajikan santai, dinikmati perlahan.</p>
+      <p class="lead">Seluruh harga ditampilkan dalam ribuan rupiah. Pilihan ukuran: R (Reguler) &amp; L (Large), kecuali bertanda khusus.</p>
     </div>
   </section>
 
   <section class="tight">
     <div class="wrap">
 
-      <div class="draft-note">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.3 3.9 2.5 17.5a1.5 1.5 0 0 0 1.3 2.2h16.4a1.5 1.5 0 0 0 1.3-2.2L13.7 3.9a1.5 1.5 0 0 0-2.6 0Z"/></svg>
-        <p><strong>Contoh tampilan.</strong> Item dan harga di bawah ini adalah draf untuk keperluan desain, belum menggunakan data resmi. Mohon perbarui dengan menu dan harga final dari tim a better cup sebelum situs ini dipublikasikan.</p>
+      <div class="quicknav">
+        <a href="#special">Special</a>
+        <a href="#classic">Classic</a>
+        <a href="#sweetness">Sweetness</a>
+        <a href="#tea">Tea</a>
+        <a href="#matcha">Matcha</a>
+        <a href="#chocolate">Chocolate</a>
+        <a href="#pastry">Pastry</a>
       </div>
 
-      <div class="menu-cat">
-        <div class="cat-head"><h2>Kopi Susu</h2><span class="count mono">Signature</span></div>
-        <div class="menu-grid">
-          <div class="card m-item">
-            <div class="top"><h3>Kopi Susu Gula Aren</h3><span class="price">Rp18rb</span></div>
-            <p>Espresso, susu segar, gula aren — signature paling laris.</p>
-            <div class="badges"><span class="pill">Best Seller</span></div>
+      <div class="showcase">
+        <p class="kicker">Favorit Kami</p>
+        <div class="showcase-grid">
+          <div class="sc-item">
+            <div class="sc-photo"><img src="assets/img/menu/butterscotch-sea-salt-cloud.png" alt="Butterscotch Sea Salt Cloud" loading="lazy"></div>
+            <h4>Butterscotch Sea Salt Cloud</h4>
+            <span>25 / 29</span>
           </div>
-          <div class="card m-item">
-            <div class="top"><h3>Kopi Susu Original</h3><span class="price">Rp16rb</span></div>
-            <p>Racikan dasar kopi susu, manis pas dan bisa disesuaikan.</p>
+          <div class="sc-item">
+            <div class="sc-photo"><img src="assets/img/menu/ice-matcha-latte.png" alt="Ice Matcha Latte" loading="lazy"></div>
+            <h4>Ice Matcha Latte</h4>
+            <span>25 / 29</span>
           </div>
-          <div class="card m-item">
-            <div class="top"><h3>Hazel Latte</h3><span class="price">Rp22rb</span></div>
-            <p>Espresso, susu, dan sirup hazelnut untuk rasa yang lebih kaya.</p>
-            <div class="badges"><span class="pill new">Baru</span></div>
+          <div class="sc-item">
+            <div class="sc-photo"><img src="assets/img/menu/better-strong-aren.png" alt="Better Strong Aren" loading="lazy"></div>
+            <h4>Better Strong Aren</h4>
+            <span>17 / 21</span>
           </div>
         </div>
       </div>
 
-      <div class="menu-cat">
-        <div class="cat-head"><h2>Kopi Klasik</h2><span class="count mono">Espresso-Based</span></div>
-        <div class="menu-grid">
-          <div class="card m-item">
-            <div class="top"><h3>Americano</h3><span class="price">Rp16rb</span></div>
-            <p>Espresso murni dengan air, panas atau dingin.</p>
-          </div>
-          <div class="card m-item">
-            <div class="top"><h3>Cappuccino</h3><span class="price">Rp20rb</span></div>
-            <p>Espresso dan susu dikocok lembut dengan foam tebal.</p>
-          </div>
-          <div class="card m-item">
-            <div class="top"><h3>Cafe Latte</h3><span class="price">Rp20rb</span></div>
-            <p>Espresso dengan susu steamed yang lembut, foam tipis.</p>
-          </div>
+      <div class="menu-cat" id="special">
+        <div class="cat-head">
+          <p class="kicker">Signature <span class="rl">— R / L</span></p>
+          <h2>A Better Cup Special</h2>
         </div>
+        <div class="m-row"><div class="m-name"><span class="n">Better Strong Aren</span></div><div class="m-price"><span>17</span><span class="sep">/</span><span class="l">21</span></div></div>
+        <div class="m-row"><div class="m-name"><span class="n">Better Mild Aren</span></div><div class="m-price"><span>17</span><span class="sep">/</span><span class="l">21</span></div></div>
+        <div class="m-row"><div class="m-name"><span class="n">Mango Sticky Rice</span></div><div class="m-price"><span>35</span><span class="sep">/</span><span class="l">39</span></div></div>
+        <div class="m-row"><div class="m-name"><span class="n">Dirty Cendol</span></div><div class="m-price"><span>35</span><span class="sep">/</span><span class="l">39</span></div></div>
+        <div class="m-row"><div class="m-name"><span class="n">Putu Bambu Cloud</span></div><div class="m-price"><span>35</span><span class="sep">/</span><span class="l">39</span></div></div>
+        <div class="m-row"><div class="m-name"><span class="n">Americano Mango Passionfruit</span></div><div class="m-price"><span>19</span><span class="sep">/</span><span class="l">23</span></div></div>
       </div>
 
-      <div class="menu-cat">
-        <div class="cat-head"><h2>Non-Kopi</h2><span class="count mono">Untuk Teman Nongkrong</span></div>
-        <div class="menu-grid">
-          <div class="card m-item">
-            <div class="top"><h3>Cokelat Dingin</h3><span class="price">Rp19rb</span></div>
-            <p>Cokelat susu kental dengan es, manis pas.</p>
-          </div>
-          <div class="card m-item">
-            <div class="top"><h3>Matcha Latte</h3><span class="price">Rp23rb</span></div>
-            <p>Matcha grade minuman dengan susu segar.</p>
-          </div>
-          <div class="card m-item">
-            <div class="top"><h3>Teh Lemon</h3><span class="price">Rp14rb</span></div>
-            <p>Segar dan ringan, cocok untuk siang hari.</p>
-          </div>
+      <div class="menu-cat" id="classic">
+        <div class="cat-head">
+          <p class="kicker">Espresso-Based <span class="rl">— R / L</span></p>
+          <h2>A Classic</h2>
         </div>
+        <div class="m-row"><div class="m-name"><span class="n">Americano</span><span class="sub">Hot &amp; Iced</span></div><div class="m-price"><span>8</span><span class="sep">/</span><span class="l">11</span></div></div>
+        <div class="m-row"><div class="m-name"><span class="n">Cappuccino</span><span class="sub">Hot</span></div><div class="m-price"><span>14</span><span class="sep">/</span><span class="l">18</span></div></div>
+        <div class="m-row"><div class="m-name"><span class="n">Latte</span><span class="sub">Hot &amp; Iced</span></div><div class="m-price"><span>14</span><span class="sep">/</span><span class="l">18</span></div></div>
       </div>
 
-      <div class="menu-cat">
-        <div class="cat-head"><h2>Camilan</h2><span class="count mono">Teman Ngopi</span></div>
-        <div class="menu-grid">
-          <div class="card m-item">
-            <div class="top"><h3>Croissant Coklat</h3><span class="price">Rp17rb</span></div>
-            <p>Renyah di luar, lembut di dalam, isian coklat.</p>
-          </div>
-          <div class="card m-item">
-            <div class="top"><h3>Banana Cake</h3><span class="price">Rp15rb</span></div>
-            <p>Moist dan lembut, pas ditemani kopi susu.</p>
-          </div>
-          <div class="card m-item">
-            <div class="top"><h3>Roti Bakar Keju</h3><span class="price">Rp16rb</span></div>
-            <p>Roti bakar dengan keju leleh dan mentega.</p>
-          </div>
+      <div class="menu-cat" id="sweetness">
+        <div class="cat-head">
+          <p class="kicker">Sweet Coffee <span class="rl">— R / L</span></p>
+          <h2>Be My Sweetness</h2>
         </div>
+        <div class="m-row"><div class="m-name"><span class="n">Salted Caramel Latte Cloud</span></div><div class="m-price"><span>22</span><span class="sep">/</span><span class="l">26</span></div></div>
+        <div class="m-row"><div class="m-name"><span class="n">Coconut Aren Latte Cloud</span></div><div class="m-price"><span>23</span><span class="sep">/</span><span class="l">27</span></div></div>
+        <div class="m-row"><div class="m-name"><span class="n">Tiramisu Cheese Cloud</span></div><div class="m-price"><span>24</span><span class="sep">/</span><span class="l">28</span></div></div>
+        <div class="m-row"><div class="m-name"><span class="n">Avocado Coffee</span></div><div class="m-price"><span>24</span><span class="sep">/</span><span class="l">28</span></div></div>
+        <div class="m-row"><div class="m-name"><span class="n">Americano Lime Honey</span></div><div class="m-price"><span>19</span><span class="sep">/</span><span class="l">23</span></div></div>
+        <div class="m-row"><div class="m-name"><span class="n">Americano Lemongrass Ginger</span></div><div class="m-price"><span>19</span><span class="sep">/</span><span class="l">23</span></div></div>
+        <div class="m-row"><div class="m-name"><span class="n"><span class="star">&#9733;</span>Butterscotch Sea Salt Cloud</span><span class="sub">Rekomendasi barista</span></div><div class="m-price"><span>25</span><span class="sep">/</span><span class="l">29</span></div></div>
+      </div>
+
+      <div class="menu-cat" id="tea">
+        <div class="cat-head">
+          <p class="kicker">Tea Series <span class="rl">— Hot / Iced, R &amp; L</span></p>
+          <h2>Chill to the Tea</h2>
+        </div>
+        <div class="m-row"><div class="m-name"><span class="n">Lemongrass Ginger Tea</span></div><div class="m-price dual"><div class="row"><span class="lbl">Hot</span><span>19</span><span class="sep">/</span><span class="l">22</span></div><div class="row"><span class="lbl">Iced</span><span>23</span><span class="sep">/</span><span class="l">26</span></div></div></div>
+        <div class="m-row"><div class="m-name"><span class="n">Lime Honey Tea</span></div><div class="m-price dual"><div class="row"><span class="lbl">Hot</span><span>19</span><span class="sep">/</span><span class="l">22</span></div><div class="row"><span class="lbl">Iced</span><span>23</span><span class="sep">/</span><span class="l">26</span></div></div></div>
+        <div class="m-row"><div class="m-name"><span class="n">Mango Passionfruit Tea</span></div><div class="m-price dual"><div class="row"><span class="lbl">Hot</span><span>19</span><span class="sep">/</span><span class="l">22</span></div><div class="row"><span class="lbl">Iced</span><span>23</span><span class="sep">/</span><span class="l">26</span></div></div></div>
+      </div>
+
+      <div class="menu-cat" id="matcha">
+        <div class="cat-head">
+          <p class="kicker">Matcha Series <span class="rl">— R / L</span></p>
+          <h2>Be Your Matcha</h2>
+        </div>
+        <div class="m-row"><div class="m-name"><span class="n">Matcha Latte</span></div><div class="m-price"><span>25</span><span class="sep">/</span><span class="l">29</span></div></div>
+        <div class="m-row"><div class="m-name"><span class="n"><span class="star">&#9733;</span>Coconut Matcha Cloud</span><span class="sub">Rekomendasi barista</span></div><div class="m-price"><span>26</span><span class="sep">/</span><span class="l">30</span></div></div>
+        <div class="m-row"><div class="m-name"><span class="n">Dirty Matcha</span></div><div class="m-price"><span>30</span><span class="sep">/</span><span class="l">34</span></div></div>
+        <div class="m-row"><div class="m-name"><span class="n">Chocolate Matcha Cloud</span></div><div class="m-price"><span>30</span><span class="sep">/</span><span class="l">34</span></div></div>
+      </div>
+
+      <div class="menu-cat" id="chocolate">
+        <div class="cat-head">
+          <p class="kicker">Non-Kopi <span class="rl">— R / L</span></p>
+          <h2>Chocolate Series</h2>
+        </div>
+        <div class="m-row"><div class="m-name"><span class="n">Chocolate Latte</span><span class="sub">Hot &amp; Iced</span></div><div class="m-price"><span>18</span><span class="sep">/</span><span class="l">22</span></div></div>
+        <div class="m-row"><div class="m-name"><span class="n">Avocado Chocolate</span></div><div class="m-price"><span>28</span><span class="sep">/</span><span class="l">32</span></div></div>
+        <div class="m-row"><div class="m-name"><span class="n">Salted Caramel Chocolate Cloud</span></div><div class="m-price"><span>29</span><span class="sep">/</span><span class="l">33</span></div></div>
+        <div class="m-row"><div class="m-name"><span class="n"><span class="star">&#9733;</span>Butterscotch Sea Salt Chocolate Cloud</span><span class="sub">Rekomendasi barista</span></div><div class="m-price"><span>31</span><span class="sep">/</span><span class="l">35</span></div></div>
+      </div>
+
+      <div class="menu-cat" id="pastry">
+        <div class="cat-head">
+          <p class="kicker">Teman Ngopi <span class="rl">— harga satuan</span></p>
+          <h2>Pastry &amp; Food</h2>
+        </div>
+        <div class="pastry-row"><div class="pastry-thumb"><img src="assets/img/menu/butter-croissant.png" alt="Butter Croissant" loading="lazy"></div><div class="pastry-info"><h4>Butter Croissant</h4><p>Klasik, berlapis mentega, renyah di luar lembut di dalam.</p></div><div class="pastry-price">15</div></div>
+        <div class="pastry-row"><div class="pastry-thumb"><img src="assets/img/menu/cheese-bagel.png" alt="Cheese Bagel" loading="lazy"></div><div class="pastry-info"><h4>Cheese Bagel</h4><p>Lembut &amp; kenyal dengan taburan keju gurih.</p></div><div class="pastry-price">22</div></div>
+        <div class="pastry-row"><div class="pastry-thumb"><img src="assets/img/menu/almond-croissant.png" alt="Almond Croissant" loading="lazy"></div><div class="pastry-info"><h4>Almond Croissant</h4><p>Ditaburi irisan almond, manis dan gurih seimbang.</p></div><div class="pastry-price">23</div></div>
+        <div class="pastry-row"><div class="pastry-thumb"><img src="assets/img/menu/smoked-beef-sourdough.png" alt="Smoked Beef Cheese Sourdough" loading="lazy"></div><div class="pastry-info"><h4>Smoked Beef Cheese Sourdough</h4><p>Sourdough panggang, smoked beef &amp; keju leleh.</p></div><div class="pastry-price">25</div></div>
+        <div class="pastry-row"><div class="pastry-thumb"><img src="assets/img/menu/panini-chicken-onion.png" alt="Panini Smoked Chicken Onion" loading="lazy"></div><div class="pastry-info"><h4>Panini Smoked Chicken Onion</h4><p>Smoked chicken &amp; bawang karamelisasi.</p></div><div class="pastry-price">25</div></div>
+        <div class="pastry-row"><div class="pastry-thumb"><img src="assets/img/menu/chocolate-sourdough.png" alt="Chocolate Sourdough" loading="lazy"></div><div class="pastry-info"><h4>Chocolate Sourdough</h4><p>Sedikit asam, sedikit manis, favorit pencinta cokelat.</p></div><div class="pastry-price">25</div></div>
+        <div class="pastry-row"><div class="pastry-thumb"><img src="assets/img/menu/panini-beef-cheese.png" alt="Panini Beef Cheese" loading="lazy"></div><div class="pastry-info"><h4>Panini Beef Cheese</h4><p>Beef berbumbu &amp; keju leleh, pas kapan saja.</p></div><div class="pastry-price">25</div></div>
+        <div class="pastry-row"><div class="pastry-thumb"><img src="assets/img/menu/cranberry-sourdough.png" alt="Cranberry Creamcheese Sourdough" loading="lazy"></div><div class="pastry-info"><h4>Cranberry Creamcheese Sourdough</h4><p>Cream cheese &amp; cranberry kering, manis segar.</p></div><div class="pastry-price">25</div></div>
       </div>
 
     </div>

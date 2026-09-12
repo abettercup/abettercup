@@ -10,12 +10,13 @@ tetap di Hostinger sesuai rencana yang sudah didiskusikan.
 ```
 index.html      → Home
 about.html      → Tentang Kami
-menu.html       → Menu (harga masih contoh/draft — lihat catatan di bawah)
+menu.html       → Menu (item &amp; harga resmi)
 outlets.html    → Lokasi Outlet
 contact.html    → Kontak
 assets/
   style.css     → Semua styling (1 file, dipakai semua halaman)
   script.js     → Toggle menu mobile + toggle tema terang/gelap
+  img/menu/     → Foto-foto item menu (drink & pastry)
 CNAME           → Supaya GitHub Pages mengenali domain abettercup.id
 ```
 
@@ -23,10 +24,9 @@ Tidak ada proses build — tinggal upload apa adanya.
 
 ## ⚠️ Yang masih perlu diisi sebelum go-live
 
-- **Menu & harga** (`menu.html`) — masih contoh untuk kebutuhan desain, ganti dengan data resmi.
 - **Foto outlet** — belum ada foto asli tiap outlet, halaman `outlets.html` masih teks saja. Bisa ditambahkan kalau sudah tersedia.
 
-Logo, foto produk hero, nomor WhatsApp, dan akun Instagram/TikTok sudah memakai data resmi (bukan placeholder lagi).
+Logo, foto produk hero, menu & harga resmi, nomor WhatsApp, dan akun Instagram/TikTok sudah memakai data resmi (bukan placeholder lagi).
 
 ## Cara upload ke GitHub
 
