@@ -2,7 +2,8 @@
 
 Website statis (HTML/CSS/JS murni, tanpa build tool) untuk A Better Cup.
 Siap diupload ke GitHub dan dihosting gratis lewat **GitHub Pages**, dengan
-domain `.com` dan email tetap di Hostinger sesuai rencana yang sudah didiskusikan.
+domain `abettercup.id` dan email (`admin@abettercup.id`, `marketing@abettercup.id`)
+tetap di Hostinger sesuai rencana yang sudah didiskusikan.
 
 ## Isi folder
 
@@ -15,7 +16,7 @@ contact.html    → Kontak
 assets/
   style.css     → Semua styling (1 file, dipakai semua halaman)
   script.js     → Toggle menu mobile + toggle tema terang/gelap
-CNAME           → Supaya GitHub Pages mengenali domain abettercup.com
+CNAME           → Supaya GitHub Pages mengenali domain abettercup.id
 ```
 
 Tidak ada proses build — tinggal upload apa adanya.
@@ -23,9 +24,9 @@ Tidak ada proses build — tinggal upload apa adanya.
 ## ⚠️ Yang masih perlu diisi sebelum go-live
 
 - **Menu & harga** (`menu.html`) — masih contoh untuk kebutuhan desain, ganti dengan data resmi.
-- **Nomor WhatsApp & akun Instagram/TikTok** (`contact.html`) — masih placeholder.
-- **Logo** — saat ini pakai logotype teks + ikon cangkir sederhana (SVG, bukan gambar). Kalau sudah ada logo resmi, tinggal ganti bagian `<svg>` di header/footer tiap halaman dengan `<img src="assets/logo.png">`.
-- **Foto produk/outlet** — belum ada foto asli, halaman sengaja didesain tanpa foto placeholder supaya tidak terlihat seperti gambar asli. Bisa ditambahkan di `menu.html` dan `outlets.html` kalau sudah tersedia.
+- **Foto outlet** — belum ada foto asli tiap outlet, halaman `outlets.html` masih teks saja. Bisa ditambahkan kalau sudah tersedia.
+
+Logo, foto produk hero, nomor WhatsApp, dan akun Instagram/TikTok sudah memakai data resmi (bukan placeholder lagi).
 
 ## Cara upload ke GitHub
 
@@ -46,16 +47,16 @@ git push -u origin main
 3. Pilih branch `main` dan folder `/ (root)`, lalu **Save**.
 4. Tunggu 1–2 menit, situs akan aktif di `https://<username>.github.io/<nama-repo>/`.
 
-## Menghubungkan domain abettercup.com (dari Hostinger)
+## Menghubungkan domain abettercup.id (dari Hostinger)
 
 Domain tetap dibeli & dikelola di Hostinger, hanya DNS-nya diarahkan ke GitHub Pages,
 sesuai rencana: **domain & email di Hostinger, website di GitHub Pages**.
 
-**Di GitHub** (repo → Settings → Pages → Custom domain): masukkan `abettercup.com`
+**Di GitHub** (repo → Settings → Pages → Custom domain): masukkan `abettercup.id`
 lalu Save. File `CNAME` di repo ini sudah berisi domain tersebut, jadi biasanya
 otomatis terisi juga.
 
-**Di Hostinger** (menu DNS / Zone Editor domain `abettercup.com`), tambahkan:
+**Di Hostinger** (menu DNS / Zone Editor domain `abettercup.id`), tambahkan:
 
 | Tipe  | Nama | Isi                  |
 |-------|------|----------------------|
@@ -69,11 +70,11 @@ otomatis terisi juga.
 GitHub Pages saat setup, kadang ada penambahan.)
 
 Setelah DNS aktif (bisa 1–24 jam), centang **Enforce HTTPS** di pengaturan
-GitHub Pages supaya situs otomatis pakai `https://abettercup.com`.
+GitHub Pages supaya situs otomatis pakai `https://abettercup.id`.
 
-**Email** (`info@abettercup.com`) tidak perlu diubah — tetap jalan seperti biasa
-di Hostinger karena hanya DNS *A record* website yang dipindah, MX record email
-dibiarkan seperti semula.
+**Email** (`admin@abettercup.id`, `marketing@abettercup.id`, dst.) tidak perlu
+diubah — tetap jalan seperti biasa di Hostinger karena hanya DNS *A record*
+website yang dipindah, MX record email dibiarkan seperti semula.
 
 ## Menjalankan/preview di komputer sendiri
 
