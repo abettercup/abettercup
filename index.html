@@ -66,13 +66,13 @@
   .pillar h3{ font-size: 18px; margin-bottom: 8px; }
   .pillar p{ color: var(--muted); font-size: 14px; }
 
-  .menu-strip{ display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
-  @media (max-width: 980px){ .menu-strip{ grid-template-columns: repeat(2,1fr); } }
-  @media (max-width: 540px){ .menu-strip{ grid-template-columns: 1fr; } }
-  .menu-item{ padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+  .menu-strip{ display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px 28px; }
+  @media (max-width: 640px){ .menu-strip{ grid-template-columns: 1fr; } }
+  .menu-item{ padding: 22px 24px; display: flex; flex-direction: column; gap: 8px; }
+  .menu-item .cat-label{ font-size: 12px; color: var(--muted); margin: 0; }
   .menu-item .tag-row{ display:flex; justify-content:space-between; align-items:center; }
-  .menu-item h4{ font-size: 15.5px; margin: 0; }
-  .menu-item .desc{ color: var(--muted); font-size: 13px; line-height:1.5; flex: 1; }
+  .menu-item h4{ font-size: 17px; margin: 0; }
+  .menu-item .desc{ color: var(--muted); font-size: 13.5px; line-height:1.55; flex: 1; }
   .menu-item .price{ font-family:'Space Mono',monospace; font-weight:700; color: var(--cherry); font-size: 14px; }
 
   .outlet-band-grid{ display:grid; grid-template-columns: 1.1fr 1fr; gap: 40px; align-items:center; }
@@ -182,24 +182,40 @@
       </div>
       <div class="menu-strip">
         <div class="card menu-item">
-          <div class="tag-row"><h4>Kopi Susu Gula Aren</h4></div>
-          <p class="desc">Espresso, susu segar, dan gula aren — signature yang paling banyak dicari.</p>
+          <p class="cat-label">A Classic Coffee</p>
+          <div class="tag-row"><h4>Ice Americano</h4></div>
+          <p class="desc">Espresso murni dengan air dingin — pas untuk kamu yang menyukai karakter kopi lugas tanpa pemanis.</p>
+          <span class="price mono">mulai Rp8rb*</span>
+        </div>
+        <div class="card menu-item">
+          <p class="cat-label">a better cup Special</p>
+          <div class="tag-row"><h4>Better Strong Aren</h4></div>
+          <p class="desc">Kombinasi espresso mantap dan gurihnya gula aren asli — racikan signature untuk dorongan energi ekstra sepanjang hari.</p>
+          <span class="price mono">mulai Rp17rb*</span>
+        </div>
+        <div class="card menu-item">
+          <p class="cat-label">Be Your Matcha</p>
+          <div class="tag-row"><h4>Ice Matcha Latte</h4></div>
+          <p class="desc">Seduhan matcha premium dengan tekstur milk foam yang creamy — menghadirkan momen tenang dan menyegarkan di setiap tegukan.</p>
+          <span class="price mono">mulai Rp25rb*</span>
+        </div>
+        <div class="card menu-item">
+          <p class="cat-label">Be My Sweetness</p>
+          <div class="tag-row"><h4>Butterscotch Sea Salt Cloud</h4></div>
+          <p class="desc">Paduan gurih-manis butterscotch dengan krim lembut dan sentuhan sea salt — penutup hari yang sempurna untuk kamu pemuja rasa manis.</p>
+          <span class="price mono">mulai Rp25rb*</span>
+        </div>
+        <div class="card menu-item">
+          <p class="cat-label">Chocolate Series</p>
+          <div class="tag-row"><h4>Ice Chocolate Latte</h4></div>
+          <p class="desc">Cokelat kaya rasa yang berpadu dengan susu segar dingin, pilihan non-kopi klasik untuk menemani waktu santaimu.</p>
           <span class="price mono">mulai Rp18rb*</span>
         </div>
         <div class="card menu-item">
-          <div class="tag-row"><h4>Americano</h4></div>
-          <p class="desc">Espresso murni dengan air panas atau dingin, untuk yang suka rasa kopi apa adanya.</p>
-          <span class="price mono">mulai Rp16rb*</span>
-        </div>
-        <div class="card menu-item">
-          <div class="tag-row"><h4>Cappuccino</h4></div>
-          <p class="desc">Espresso dan susu yang dikocok lembut dengan foam tebal di atasnya.</p>
-          <span class="price mono">mulai Rp20rb*</span>
-        </div>
-        <div class="card menu-item">
-          <div class="tag-row"><h4>Cokelat Dingin</h4></div>
-          <p class="desc">Pilihan non-kopi untuk teman yang belum siap ngopi tapi mau nongkrong bareng.</p>
-          <span class="price mono">mulai Rp19rb*</span>
+          <p class="cat-label">Chill to the Tea</p>
+          <div class="tag-row"><h4>Ice Mango Passionfruit Tea</h4></div>
+          <p class="desc">Kesegaran teh pilihan berpadu dengan manis asam buah mangga dan markisa — penyegar dahaga ideal di harimu yang padat.</p>
+          <span class="price mono">mulai Rp23rb*</span>
         </div>
       </div>
       <p class="mono" style="font-size:11.5px;color:var(--muted);margin-top:16px;">*Harga contoh tampilan, lihat halaman Menu untuk daftar lengkap.</p>
