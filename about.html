@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tentang Kami — A Better Cup</title>
+<meta name="description" content="Kenapa A Better Cup ada: kopi kekinian dengan kualitas kelas kompetisi dan harga yang lebih adil, diracik konsisten di setiap outlet.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23c1422b'/%3E%3Cpath d='M9 13h13v6a5 5 0 0 1-5 5h-3a5 5 0 0 1-5-5v-6Z' fill='%23fffcf6'/%3E%3Cpath d='M22 15h1.5a3 3 0 0 1 0 6H22' fill='none' stroke='%23fffcf6' stroke-width='1.6'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Work+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  .story-grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 44px; align-items: start; }
+  @media (max-width: 860px){ .story-grid{ grid-template-columns: 1fr; } }
+  .story-grid p + p{ margin-top: 14px; }
+  .story-grid .lede{ font-family:'Bricolage Grotesque',serif; font-size: 22px; font-weight: 600; line-height: 1.35; }
+  .story-grid .body-copy{ color: var(--muted); font-size: 15px; }
+
+  .values-grid{ display:grid; grid-template-columns: repeat(4,1fr); gap: 16px; }
+  @media (max-width: 980px){ .values-grid{ grid-template-columns: repeat(2,1fr); } }
+  @media (max-width: 540px){ .values-grid{ grid-template-columns: 1fr; } }
+  .value-card{ padding: 24px 22px; }
+  .value-card .icon{ width: 40px; height: 40px; border-radius: 10px; background: var(--gold-soft); color: var(--gold); display:grid; place-items:center; margin-bottom: 16px; }
+  .value-card .icon svg{ width: 20px; height: 20px; }
+  .value-card h3{ font-size: 15.5px; margin-bottom: 6px; }
+  .value-card p{ color: var(--muted); font-size: 13.5px; }
+
+  .timeline{ display: flex; flex-direction: column; gap: 0; border-left: 2px solid var(--line); margin-left: 6px; }
+  .tl-item{ position: relative; padding: 0 0 34px 28px; }
+  .tl-item:last-child{ padding-bottom: 0; }
+  .tl-item::before{ content:""; position:absolute; left:-7px; top:2px; width:12px; height:12px; border-radius:50%; background: var(--cherry); border: 3px solid var(--bg); }
+  .tl-item .stage{ font-family:'Space Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:.08em; color: var(--cherry); margin-bottom:4px; }
+  .tl-item h3{ font-size: 17px; margin-bottom: 6px; }
+  .tl-item p{ color: var(--muted); font-size: 14px; max-width: 56ch; }
+
+  .quote-band{ padding: 44px 40px; text-align:center; }
+  .quote-band blockquote{ margin:0; font-family:'Bricolage Grotesque',serif; font-size: clamp(20px,2.6vw,28px); font-weight:600; line-height:1.4; max-width: 44ch; margin-inline:auto; }
+  .quote-band cite{ display:block; margin-top:16px; font-style:normal; color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="bar">
+    <a class="logo" href="index.html">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="var(--cherry)"/><path d="M9 13h13v6a5 5 0 0 1-5 5h-3a5 5 0 0 1-5-5v-6Z" fill="var(--surface)"/><path d="M22 15h1.5a3 3 0 0 1 0 6H22" fill="none" stroke="var(--surface)" stroke-width="1.6"/></svg>
+      <span class="wordmark">A Better Cup</span>
+    </a>
+    <nav>
+      <ul class="nav-links" data-nav-links>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="menu.html">Menu</a></li>
+        <li><a href="outlets.html">Lokasi</a></li>
+        <li><a href="about.html" aria-current="page">Tentang Kami</a></li>
+        <li><a href="contact.html">Kontak</a></li>
+      </ul>
+    </nav>
+    <div class="nav-right">
+      <button class="theme-toggle" data-theme-toggle aria-label="Ganti tema terang/gelap">
+        <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v2.2M12 19.3v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6" stroke-linecap="round"/></svg>
+        <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 14.2A8.5 8.5 0 1 1 9.8 4a6.7 6.7 0 0 0 10.2 10.2Z"/></svg>
+      </button>
+      <button class="nav-toggle" data-nav-toggle aria-label="Buka menu" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section class="page-hero">
+    <div class="wrap">
+      <p class="eyebrow">Tentang Kami</p>
+      <h1>Kopi yang ditakar<br>buat diminum tiap hari.</h1>
+      <p class="lead">A Better Cup lahir dari satu pertanyaan sederhana: kenapa kopi enak harus jadi barang mewah?</p>
+    </div>
+  </section>
+
+  <section class="tight">
+    <div class="wrap story-grid">
+      <p class="lede">Kami percaya kopi kekinian nggak harus memilih antara enak dan terjangkau — dua-duanya bisa jalan bareng.</p>
+      <div class="body-copy">
+        <p>A Better Cup dibangun untuk pecinta kopi susu dan espresso-based yang ingin ngopi jadi rutinitas, bukan sesekali reward diri. Setiap resep kami diuji supaya rasanya tetap konsisten — dari cup pertama di outlet pertama, sampai cup yang kamu minum hari ini di kota yang berbeda.</p>
+        <p>Kami memilih biji arabika dan robusta dengan standar rasa yang sama ketatnya dengan kedai kopi spesialti, lalu meracik ulang formulanya supaya harga jualnya tetap masuk akal untuk konsumsi harian. Itu prinsip yang nggak berubah sejak outlet pertama kami buka, dan akan terus jadi pegangan kami saat membuka outlet-outlet berikutnya.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Nilai Kami</p>
+        <h2>Empat hal yang kami jaga di setiap outlet.</h2>
+      </div>
+      <div class="values-grid">
+        <div class="card value-card">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg></div>
+          <h3>Rasa Konsisten</h3>
+          <p>Resep dan takaran yang sama di setiap outlet, dicek berkala supaya kualitasnya nggak turun.</p>
+        </div>
+        <div class="card value-card">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+          <h3>Harga Bersahabat</h3>
+          <p>Diracik supaya cocok untuk kantong harian, tanpa mengorbankan kualitas bahan baku.</p>
+        </div>
+        <div class="card value-card">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8Z"/></svg></div>
+          <h3>Cepat &amp; Nyaman</h3>
+          <p>Alur pemesanan yang ringkas dan outlet yang gampang dijangkau di titik-titik keramaian.</p>
+        </div>
+        <div class="card value-card">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 21c1-4 4-7 9-7s8 3 9 7M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"/></svg></div>
+          <h3>Paham Selera Lokal</h3>
+          <p>Menu dikembangkan dengan lidah orang Indonesia sebagai patokan utama — bukan sekadar ikut tren.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap" style="max-width: 760px;">
+      <div class="section-head">
+        <p class="eyebrow">Perjalanan Kami</p>
+        <h2>Dari satu outlet, ke titik-titik baru setiap tahun.</h2>
+      </div>
+      <div class="timeline">
+        <div class="tl-item">
+          <p class="stage">Awal</p>
+          <h3>Outlet pertama dekat kampus</h3>
+          <p>A Better Cup memulai perjalanan dari area yang ramai aktivitas mahasiswa di Jakarta Barat, tempat resep signature kami pertama kali diuji ke pelanggan sehari-hari.</p>
+        </div>
+        <div class="tl-item">
+          <p class="stage">Berkembang</p>
+          <h3>Ekspansi ke Jakarta Selatan, Depok, dan Surabaya</h3>
+          <p>Outlet baru dibuka di titik-titik dengan trafik tinggi — dari jalan utama sampai kawasan dekat kampus — sambil menjaga resep dan standar layanan tetap sama.</p>
+        </div>
+        <div class="tl-item">
+          <p class="stage">Sekarang</p>
+          <h3>Terus bertambah</h3>
+          <p>Kami terus mengevaluasi lokasi-lokasi baru yang strategis untuk outlet berikutnya, supaya makin banyak orang bisa ngopi enak dengan harga yang adil.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap">
+      <div class="card quote-band">
+        <blockquote>&ldquo;Kopi yang enak itu seharusnya jadi kebiasaan, bukan kemewahan sesekali.&rdquo;</blockquote>
+        <cite>— Prinsip di balik setiap cup A Better Cup</cite>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="foot-top">
+    <div class="foot-brand">
+      <a class="logo" href="index.html">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="var(--cherry)"/><path d="M9 13h13v6a5 5 0 0 1-5 5h-3a5 5 0 0 1-5-5v-6Z" fill="var(--surface)"/><path d="M22 15h1.5a3 3 0 0 1 0 6H22" fill="none" stroke="var(--surface)" stroke-width="1.6"/></svg>
+        <span class="wordmark">A Better Cup</span>
+      </a>
+      <p>Kopi kekinian dengan kualitas kelas kompetisi dan harga yang lebih adil, untuk diminum tiap hari.</p>
+    </div>
+    <div>
+      <h4>Jelajahi</h4>
+      <ul class="foot-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="menu.html">Menu</a></li>
+        <li><a href="outlets.html">Lokasi</a></li>
+        <li><a href="about.html">Tentang Kami</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Perusahaan</h4>
+      <ul class="foot-links">
+        <li><a href="about.html">Cerita Kami</a></li>
+        <li><a href="contact.html">Kontak</a></li>
+        <li><a href="contact.html">Kerja Sama Outlet</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Kontak</h4>
+      <ul class="foot-links">
+        <li><a href="mailto:info@abettercup.com">info@abettercup.com</a></li>
+        <li><a href="contact.html">Media Sosial</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot-bottom">
+    <span>© <span id="year"></span> A Better Cup. Seluruh hak cipta dilindungi.</span>
+    <span class="mono">abettercup.com</span>
+  </div>
+</footer>
+
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+<script src="assets/script.js"></script>
+</body>
+</html>

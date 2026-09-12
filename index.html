@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A Better Cup — Kopi Kekinian, Harga Masuk Akal</title>
+<meta name="description" content="A Better Cup meracik kopi kekinian dengan biji pilihan dan harga yang adil untuk diminum tiap hari. Temukan outlet terdekat dan lihat menu kami.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23c1422b'/%3E%3Cpath d='M9 13h13v6a5 5 0 0 1-5 5h-3a5 5 0 0 1-5-5v-6Z' fill='%23fffcf6'/%3E%3Cpath d='M22 15h1.5a3 3 0 0 1 0 6H22' fill='none' stroke='%23fffcf6' stroke-width='1.6'/%3E%3Cpath d='M12 9c0-1.2.8-1.2.8-2.4M15.4 9c0-1.2.8-1.2.8-2.4' stroke='%23fffcf6' stroke-width='1.4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Work+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  /* ---- Home-only styling ---- */
+  .hero-section{ padding-block: 52px 30px; }
+  .hero-grid{
+    display: grid; grid-template-columns: 1.15fr .85fr; gap: 44px; align-items: center;
+  }
+  @media (max-width: 900px){ .hero-grid{ grid-template-columns: 1fr; } }
+  .hero-copy h1{ font-size: clamp(34px, 5.4vw, 54px); font-weight: 800; line-height: 1.04; }
+  .hero-copy .lead{ color: var(--muted); font-size: 17px; max-width: 48ch; margin-top: 18px; }
+  .hero-actions{ display: flex; gap: 12px; flex-wrap: wrap; margin-top: 28px; }
+
+  .cup-card{
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg);
+    box-shadow: var(--shadow); padding: 26px 26px 22px; position: relative; overflow: hidden;
+  }
+  .cup-card::before{
+    content:""; position:absolute; inset:0; opacity:.08; pointer-events:none;
+    background: radial-gradient(140px 140px at 88% -10%, var(--cherry), transparent 70%);
+  }
+  .cup-card .cc-eyebrow{ font-family:'Space Mono',monospace; font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); }
+  .cup-card h3{ font-size: 19px; margin: 6px 0 18px; }
+  .cup-rows{ display:flex; flex-direction:column; gap:12px; }
+  .cup-row{ display:grid; grid-template-columns: 92px 1fr; gap:12px; align-items:baseline; }
+  .cup-row .k{ font-family:'Space Mono',monospace; font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; }
+  .cup-row .v{ font-size: 14px; font-weight: 600; }
+  .cup-meter{ height:6px; border-radius:999px; background:var(--surface-2); margin-top:6px; overflow:hidden; }
+  .cup-meter span{ display:block; height:100%; background: var(--cherry); border-radius:999px; }
+  .cup-tags{ display:flex; flex-wrap:wrap; gap:6px; margin-top:16px; }
+
+  .pillars{ display:grid; grid-template-columns: repeat(3,1fr); gap: 18px; }
+  @media (max-width: 820px){ .pillars{ grid-template-columns: 1fr; } }
+  .pillar{ padding: 26px 24px; }
+  .pillar .num{ font-family:'Space Mono',monospace; color: var(--cherry); font-size: 12px; margin-bottom: 14px; display:block; }
+  .pillar h3{ font-size: 18px; margin-bottom: 8px; }
+  .pillar p{ color: var(--muted); font-size: 14px; }
+
+  .menu-strip{ display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  @media (max-width: 980px){ .menu-strip{ grid-template-columns: repeat(2,1fr); } }
+  @media (max-width: 540px){ .menu-strip{ grid-template-columns: 1fr; } }
+  .menu-item{ padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+  .menu-item .tag-row{ display:flex; justify-content:space-between; align-items:center; }
+  .menu-item h4{ font-size: 15.5px; margin: 0; }
+  .menu-item .desc{ color: var(--muted); font-size: 13px; line-height:1.5; flex: 1; }
+  .menu-item .price{ font-family:'Space Mono',monospace; font-weight:700; color: var(--cherry); font-size: 14px; }
+
+  .outlet-band-grid{ display:grid; grid-template-columns: 1.1fr 1fr; gap: 40px; align-items:center; }
+  @media (max-width: 860px){ .outlet-band-grid{ grid-template-columns: 1fr; } }
+  .city-list{ display:flex; flex-direction:column; gap: 14px; }
+  .city-row{ display:flex; align-items:center; justify-content:space-between; padding: 16px 18px; border-radius: var(--radius-sm); background: var(--surface); border: 1px solid var(--line); }
+  .city-row .name{ font-weight: 700; font-size: 15px; }
+  .city-row .count{ font-family:'Space Mono',monospace; font-size: 12px; color: var(--muted); }
+
+  .cta-band{ text-align:center; padding: 60px 24px; border-radius: var(--radius-lg); background: var(--cherry); color: var(--cherry-ink); }
+  .cta-band h2{ font-size: clamp(24px,3.6vw,34px); font-weight: 800; }
+  .cta-band p{ opacity:.9; margin-top: 10px; max-width: 46ch; margin-inline:auto; }
+  .cta-band .hero-actions{ justify-content:center; margin-top: 26px; }
+  .cta-band .btn-primary{ background: var(--cherry-ink); color: var(--cherry); }
+  .cta-band .btn-ghost{ border-color: color-mix(in srgb, var(--cherry-ink) 50%, transparent); color: var(--cherry-ink); }
+  .cta-band .btn-ghost:hover{ border-color: var(--cherry-ink); color: var(--cherry-ink); opacity:.85; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="bar">
+    <a class="logo" href="index.html">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="var(--cherry)"/><path d="M9 13h13v6a5 5 0 0 1-5 5h-3a5 5 0 0 1-5-5v-6Z" fill="var(--surface)"/><path d="M22 15h1.5a3 3 0 0 1 0 6H22" fill="none" stroke="var(--surface)" stroke-width="1.6"/><path d="M12 9c0-1.2.8-1.2.8-2.4M15.4 9c0-1.2.8-1.2.8-2.4" stroke="var(--surface)" stroke-width="1.4" stroke-linecap="round"/></svg>
+      <span class="wordmark">A Better Cup</span>
+    </a>
+    <nav>
+      <ul class="nav-links" data-nav-links>
+        <li><a href="index.html" aria-current="page">Home</a></li>
+        <li><a href="menu.html">Menu</a></li>
+        <li><a href="outlets.html">Lokasi</a></li>
+        <li><a href="about.html">Tentang Kami</a></li>
+        <li><a href="contact.html">Kontak</a></li>
+      </ul>
+    </nav>
+    <div class="nav-right">
+      <button class="theme-toggle" data-theme-toggle aria-label="Ganti tema terang/gelap">
+        <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4.5"/><path d="M12 2.5v2.2M12 19.3v2.2M4.2 4.2l1.6 1.6M18.2 18.2l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.2 19.8l1.6-1.6M18.2 5.8l1.6-1.6" stroke-linecap="round"/></svg>
+        <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 14.2A8.5 8.5 0 1 1 9.8 4a6.7 6.7 0 0 0 10.2 10.2Z"/></svg>
+      </button>
+      <button class="nav-toggle" data-nav-toggle aria-label="Buka menu" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section class="hero-section">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow">A Better Cup — Kopi Kekinian</p>
+        <h1>Kopi enak,<br>harga masuk akal.</h1>
+        <p class="lead">Kami meracik kopi susu dan espresso-based dengan biji pilihan dan resep yang konsisten di setiap outlet — supaya ngopi enak bisa jadi kebiasaan harian, bukan cuma sesekali.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="menu.html">Lihat Menu</a>
+          <a class="btn btn-ghost" href="outlets.html">Temukan Outlet Terdekat</a>
+        </div>
+      </div>
+      <div class="cup-card">
+        <p class="cc-eyebrow">Catatan Rasa</p>
+        <h3 class="display">Signature Kopi Susu</h3>
+        <div class="cup-rows">
+          <div class="cup-row">
+            <span class="k">Body</span>
+            <div>
+              <span class="v">Medium–Full</span>
+              <div class="cup-meter"><span style="width:75%"></span></div>
+            </div>
+          </div>
+          <div class="cup-row">
+            <span class="k">Keasaman</span>
+            <div>
+              <span class="v">Rendah &amp; Lembut</span>
+              <div class="cup-meter"><span style="width:35%"></span></div>
+            </div>
+          </div>
+          <div class="cup-row">
+            <span class="k">Kemanisan</span>
+            <div>
+              <span class="v">Pas, Bisa Disesuaikan</span>
+              <div class="cup-meter"><span style="width:55%"></span></div>
+            </div>
+          </div>
+        </div>
+        <div class="cup-tags">
+          <span class="pill">Karamel</span>
+          <span class="pill">Cokelat Susu</span>
+          <span class="pill">Kacang Panggang</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="tight">
+    <div class="wrap">
+      <div class="pillars">
+        <div class="card pillar">
+          <span class="num mono">01</span>
+          <h3>Kualitas Kelas Kompetisi</h3>
+          <p>Biji arabika dan robusta pilihan, diseduh dengan standar resep yang sama ketatnya dengan kedai spesialti — tanpa kompromi rasa.</p>
+        </div>
+        <div class="card pillar">
+          <span class="num mono">02</span>
+          <h3>Harga untuk Ngopi Tiap Hari</h3>
+          <p>Diracik supaya masuk akal buat dompet harian, bukan cuma sesekali reward diri — karena ngopi enak harusnya nggak bikin mikir dua kali.</p>
+        </div>
+        <div class="card pillar">
+          <span class="num mono">03</span>
+          <h3>Rasa yang Konsisten</h3>
+          <p>Resep dan takaran yang sama di setiap outlet, jadi cup yang kamu minum di Jakarta rasanya sama enaknya dengan di Surabaya.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Menu Favorit</p>
+        <h2>Yang paling sering dipesan.</h2>
+        <p>Sebagian dari menu andalan kami — lengkapnya ada di halaman menu.</p>
+      </div>
+      <div class="menu-strip">
+        <div class="card menu-item">
+          <div class="tag-row"><h4>Kopi Susu Gula Aren</h4></div>
+          <p class="desc">Espresso, susu segar, dan gula aren — signature yang paling banyak dicari.</p>
+          <span class="price mono">mulai Rp18rb*</span>
+        </div>
+        <div class="card menu-item">
+          <div class="tag-row"><h4>Americano</h4></div>
+          <p class="desc">Espresso murni dengan air panas atau dingin, untuk yang suka rasa kopi apa adanya.</p>
+          <span class="price mono">mulai Rp16rb*</span>
+        </div>
+        <div class="card menu-item">
+          <div class="tag-row"><h4>Cappuccino</h4></div>
+          <p class="desc">Espresso dan susu yang dikocok lembut dengan foam tebal di atasnya.</p>
+          <span class="price mono">mulai Rp20rb*</span>
+        </div>
+        <div class="card menu-item">
+          <div class="tag-row"><h4>Cokelat Dingin</h4></div>
+          <p class="desc">Pilihan non-kopi untuk teman yang belum siap ngopi tapi mau nongkrong bareng.</p>
+          <span class="price mono">mulai Rp19rb*</span>
+        </div>
+      </div>
+      <p class="mono" style="font-size:11.5px;color:var(--muted);margin-top:16px;">*Harga contoh tampilan, lihat halaman Menu untuk daftar lengkap.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap outlet-band-grid">
+      <div>
+        <p class="eyebrow">Lokasi Outlet</p>
+        <h2 class="display" style="font-size:clamp(22px,3vw,30px);font-weight:700;">Sudah hadir di Jakarta, Depok, dan Surabaya.</h2>
+        <p style="color:var(--muted);font-size:15px;margin-top:14px;max-width:48ch;">Dari area kampus sampai jalan utama yang ramai — dan terus bertambah setiap tahun.</p>
+        <a class="btn btn-primary" href="outlets.html" style="margin-top:22px;">Lihat Semua Outlet</a>
+      </div>
+      <div class="city-list">
+        <div class="city-row"><span class="name">Jakarta Barat &amp; Selatan</span><span class="count mono">Untar · Tebet</span></div>
+        <div class="city-row"><span class="name">Depok</span><span class="count mono">Kelapa Dua</span></div>
+        <div class="city-row"><span class="name">Surabaya</span><span class="count mono">Tunjungan · Petra · Mulyosari</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="cta-band">
+        <h2 class="display">Siap ngopi hari ini?</h2>
+        <p>Cek outlet terdekat dari lokasi kamu, atau lihat menu lengkap sebelum berangkat.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="outlets.html">Temukan Outlet</a>
+          <a class="btn btn-ghost" href="contact.html">Hubungi Kami</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="foot-top">
+    <div class="foot-brand">
+      <a class="logo" href="index.html">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="8" fill="var(--cherry)"/><path d="M9 13h13v6a5 5 0 0 1-5 5h-3a5 5 0 0 1-5-5v-6Z" fill="var(--surface)"/><path d="M22 15h1.5a3 3 0 0 1 0 6H22" fill="none" stroke="var(--surface)" stroke-width="1.6"/></svg>
+        <span class="wordmark">A Better Cup</span>
+      </a>
+      <p>Kopi kekinian dengan kualitas kelas kompetisi dan harga yang lebih adil, untuk diminum tiap hari.</p>
+    </div>
+    <div>
+      <h4>Jelajahi</h4>
+      <ul class="foot-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="menu.html">Menu</a></li>
+        <li><a href="outlets.html">Lokasi</a></li>
+        <li><a href="about.html">Tentang Kami</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Perusahaan</h4>
+      <ul class="foot-links">
+        <li><a href="about.html">Cerita Kami</a></li>
+        <li><a href="contact.html">Kontak</a></li>
+        <li><a href="contact.html">Kerja Sama Outlet</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Kontak</h4>
+      <ul class="foot-links">
+        <li><a href="mailto:info@abettercup.com">info@abettercup.com</a></li>
+        <li><a href="contact.html">Media Sosial</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot-bottom">
+    <span>© <span id="year"></span> A Better Cup. Seluruh hak cipta dilindungi.</span>
+    <span class="mono">abettercup.com</span>
+  </div>
+</footer>
+
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+<script src="assets/script.js"></script>
+</body>
+</html>
