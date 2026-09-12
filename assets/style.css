@@ -1,7 +1,8 @@
 /* ==========================================================================
    A Better Cup — shared design system
-   Palette: coffee-cherry (primary accent) + roasted gold (secondary) on a
-   light-roast cream / dark-roast espresso ground.
+   Palette: sourced from the official logo — forest green (primary) + sunrise
+   gold (secondary) + sage green + tan cup, on a warm cream / deep green-black
+   ground.
    Type: Bricolage Grotesque (display) + Work Sans (body) + Space Mono (data/labels)
    ========================================================================== */
 
@@ -11,21 +12,21 @@
   color-scheme: light;
 
   /* ---- light (default) ---- */
-  --bg: #f7efe0;
-  --surface: #fffcf6;
-  --surface-2: #efe1c8;
-  --ink: #241710;
-  --muted: #7d6a5a;
-  --line: #e2d2b4;
+  --bg: #f7f1e0;
+  --surface: #fffcf5;
+  --surface-2: #eee2c4;
+  --ink: #1c2b20;
+  --muted: #6d7a63;
+  --line: #e0d6b4;
 
-  --cherry: #c1422b;
-  --cherry-ink: #ffffff;
-  --cherry-bright: #d9573c;
-  --gold: #b97418;
-  --gold-soft: #f0dcae;
-  --good: #3f6b3f;
+  --cherry: #2c5d42;
+  --cherry-ink: #fdfaf1;
+  --cherry-bright: #3d7a56;
+  --gold: #c98a12;
+  --gold-soft: #f3e2ac;
+  --good: #3f7a4a;
 
-  --shadow: 0 1px 2px rgba(36,23,16,.06), 0 14px 30px -18px rgba(36,23,16,.35);
+  --shadow: 0 1px 2px rgba(20,30,20,.06), 0 14px 30px -18px rgba(20,30,20,.35);
   --radius-lg: 22px;
   --radius-md: 16px;
   --radius-sm: 10px;
@@ -34,18 +35,18 @@
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     color-scheme: dark;
-    --bg: #1b120c;
-    --surface: #241811;
-    --surface-2: #2e2015;
-    --ink: #f4e9d8;
-    --muted: #bda28a;
-    --line: #3c2b1c;
+    --bg: #10160d;
+    --surface: #182018;
+    --surface-2: #1f2a1c;
+    --ink: #f0ecdc;
+    --muted: #a7b19a;
+    --line: #2c3826;
 
-    --cherry: #e8603f;
-    --cherry-ink: #1b120c;
-    --cherry-bright: #ff7a54;
-    --gold: #e8a949;
-    --gold-soft: #4a3a22;
+    --cherry: #6fbf7c;
+    --cherry-ink: #10160d;
+    --cherry-bright: #86d491;
+    --gold: #e8b840;
+    --gold-soft: #4a3d1c;
     --good: #7bbf7b;
 
     --shadow: 0 1px 2px rgba(0,0,0,.4), 0 18px 34px -18px rgba(0,0,0,.6);
@@ -53,18 +54,18 @@
 }
 :root[data-theme="dark"]{
   color-scheme: dark;
-  --bg: #1b120c;
-  --surface: #241811;
-  --surface-2: #2e2015;
-  --ink: #f4e9d8;
-  --muted: #bda28a;
-  --line: #3c2b1c;
+  --bg: #10160d;
+  --surface: #182018;
+  --surface-2: #1f2a1c;
+  --ink: #f0ecdc;
+  --muted: #a7b19a;
+  --line: #2c3826;
 
-  --cherry: #e8603f;
-  --cherry-ink: #1b120c;
-  --cherry-bright: #ff7a54;
-  --gold: #e8a949;
-  --gold-soft: #4a3a22;
+  --cherry: #6fbf7c;
+  --cherry-ink: #10160d;
+  --cherry-bright: #86d491;
+  --gold: #e8b840;
+  --gold-soft: #4a3d1c;
   --good: #7bbf7b;
 
   --shadow: 0 1px 2px rgba(0,0,0,.4), 0 18px 34px -18px rgba(0,0,0,.6);
@@ -138,7 +139,7 @@ p{ margin: 0; }
   display: flex; align-items: center; justify-content: space-between; gap: 16px;
 }
 .logo{ display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); flex-shrink: 0; }
-.logo svg{ width: 30px; height: 30px; flex-shrink: 0; }
+.logo img{ width: 34px; height: 34px; object-fit: contain; flex-shrink: 0; }
 .logo .wordmark{ font-family: 'Bricolage Grotesque', serif; font-weight: 700; font-size: 17px; letter-spacing: -.01em; }
 
 .nav-links{ display: flex; align-items: center; gap: 4px; list-style: none; margin: 0; padding: 0; }
