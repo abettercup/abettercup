@@ -987,9 +987,34 @@
         var epoch = Date.UTC(1899, 11, 30);
         var d = new Date(epoch + Math.round(dateVal) * 86400000);
         dateKey = d.toISOString().slice(0, 10);
-      } else if (typeof dateVal === "string" && dateVal.length >= 8) {
-        var parsed = new Date(dateVal);
-        if (!isNaN(parsed)) dateKey = parsed.toISOString().slice(0, 10);
+      } else if (typeof dateVal === "string" && dateVal.length >= 6) {
+        // Parse date-only strings by hand instead of `new Date(str)`.
+        // Non-ISO strings (e.g. Google Sheets exporting "8/1/2026") get
+        // parsed by the browser in LOCAL time, then toISOString() converts
+        // back to UTC — for timezones ahead of UTC (like WIB, +7) that
+        // shifts the date back by one day. Extracting y/m/d with regex
+        // avoids any timezone math entirely.
+        var s = dateVal.trim();
+        var pad2 = function (n) { return String(n).padStart(2, "0"); };
+        var m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/); // ISO: YYYY-MM-DD
+        if (m) {
+          dateKey = m[1] + "-" + pad2(m[2]) + "-" + pad2(m[3]);
+        } else {
+          m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/); // M/D/YYYY or D/M/YYYY
+          if (m) {
+            var a = parseInt(m[1], 10), b = parseInt(m[2], 10), y = m[3];
+            var month = a, day = b;
+            if (a > 12) { month = b; day = a; } // first part can't be a month
+            dateKey = y + "-" + pad2(month) + "-" + pad2(day);
+          } else {
+            // Last resort: fall back to Date parsing, but read UTC fields
+            // so we don't reintroduce the same local-time shift.
+            var parsed = new Date(s);
+            if (!isNaN(parsed)) {
+              dateKey = parsed.getUTCFullYear() + "-" + pad2(parsed.getUTCMonth() + 1) + "-" + pad2(parsed.getUTCDate());
+            }
+          }
+        }
       }
       if (!dateKey) return;
       var netSales = Number(pickField(row, NET_SALES_KEYS)) || 0;
