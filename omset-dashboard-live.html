@@ -384,6 +384,13 @@
   .pill.down { color: var(--status-critical); background: color-mix(in srgb, var(--status-critical) 14%, transparent); }
   .kpi-outlet-dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
 
+  .top5-list { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-direction: column; gap: 5px; }
+  .top5-list li { display: flex; align-items: center; gap: 7px; font-size: 12.5px; }
+  .top5-rank { flex: none; width: 14px; color: var(--ink-faint); font-weight: 600; font-family: "IBM Plex Mono", monospace; }
+  .top5-name { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink); }
+  .top5-qty { flex: none; font-weight: 600; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .top5-empty { color: var(--ink-faint); font-size: 12.5px; margin: 4px 0 0; }
+
   /* ---------- breakdown card ---------- */
   .breakdown-row {
     display: grid;
@@ -1331,8 +1338,18 @@
 
     var byOutlet = {};
     rows.forEach(function (r) { byOutlet[r.outlet] = (byOutlet[r.outlet] || 0) + r.net_sales; });
-    var bestOutlet = null, bestVal = -Infinity;
-    Object.keys(byOutlet).forEach(function (k) { if (byOutlet[k] > bestVal) { bestVal = byOutlet[k]; bestOutlet = k; } });
+
+    // Top 5 drinks sold specifically as "Cup" (excludes bottled 1L, bundles,
+    // pastries, and cup+pastry combos) ranked by quantity sold in range.
+    var cupItemQty = {};
+    rows.forEach(function (r) {
+      if (r.cup !== "Cup") return;
+      cupItemQty[r.item] = (cupItemQty[r.item] || 0) + (r.qty || 0);
+    });
+    var top5CupItems = Object.keys(cupItemQty)
+      .map(function (name) { return { name: name, qty: cupItemQty[name] }; })
+      .sort(function (a, b) { return b.qty - a.qty; })
+      .slice(0, 5);
 
     var deltaHtml = "";
     if (state.preset === "7" || state.preset === "30" || state.preset === "month") {
@@ -1357,7 +1374,7 @@
     }
     kpis.push(
       { label: "Rata-rata omset / hari", value: fmtIDRCompact(avgDay), sub: "dari " + rows.length + " baris data harian" },
-      { label: "Outlet terbaik", value: bestOutlet || "&mdash;", sub: bestOutlet ? ('<span class="kpi-outlet-dot" style="background:' + outletVar(bestOutlet) + '"></span>' + fmtIDRCompact(bestVal)) : "belum ada data", isName: true }
+      { label: "Top 5 drink (khusus Cup)", isTop5: true, items: top5CupItems }
     );
 
     var wrap = document.getElementById("kpiRow");
@@ -1365,10 +1382,24 @@
     kpis.forEach(function (k) {
       var el = document.createElement("div");
       el.className = "kpi";
-      el.innerHTML =
-        '<p class="kpi-label">' + k.label + '</p>' +
-        '<p class="kpi-value">' + (k.isName ? k.value : k.value) + '</p>' +
-        '<p class="kpi-sub">' + k.sub + '</p>';
+      if (k.isTop5) {
+        var listHtml;
+        if (k.items.length) {
+          listHtml = '<ol class="top5-list">' + k.items.map(function (it, i) {
+            return '<li><span class="top5-rank">' + (i + 1) + '.</span>' +
+              '<span class="top5-name">' + it.name + '</span>' +
+              '<span class="top5-qty">' + it.qty.toLocaleString("id-ID") + '</span></li>';
+          }).join("") + '</ol>';
+        } else {
+          listHtml = '<p class="top5-empty">Belum ada penjualan Cup pada periode ini</p>';
+        }
+        el.innerHTML = '<p class="kpi-label">' + k.label + '</p>' + listHtml;
+      } else {
+        el.innerHTML =
+          '<p class="kpi-label">' + k.label + '</p>' +
+          '<p class="kpi-value">' + k.value + '</p>' +
+          '<p class="kpi-sub">' + k.sub + '</p>';
+      }
       wrap.appendChild(el);
     });
   }
