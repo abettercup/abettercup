@@ -217,11 +217,11 @@
       <label>ShopeeFood</label><input class="s1-pay" type="number" placeholder="0">
     </div>
     <div class="field-row">
-      <div class="field" style="margin-bottom:0;"><label>Total Penjualan Shift 1</label><input id="s1-total-sales" type="number" placeholder="0" readonly></div>
+      <div class="field" style="margin-bottom:0;"><label>Total Penjualan Shift 1*</label><input id="s1-total-sales" type="number" placeholder="0" readonly></div>
       <div class="field" style="margin-bottom:0;"><label>Diskon Shift 1</label><input id="s1-discount" type="number" placeholder="0"></div>
     </div>
     <div class="field">
-      <label>Actual Sales Shift 1</label><input id="s1-actual-sales" type="number" placeholder="0" readonly>
+      <label>Actual Sales Shift 1*</label><input id="s1-actual-sales" type="number" placeholder="0" readonly>
     </div>
     <div class="field-row">
       <div class="field" style="margin-bottom:0;"><label>Pastry Non Bundling</label><input id="s1-pastry-non-bundling" type="number" placeholder="0"></div>
@@ -264,11 +264,11 @@
       <label>ShopeeFood</label><input class="s2-pay" type="number" placeholder="0">
     </div>
     <div class="field-row">
-      <div class="field" style="margin-bottom:0;"><label>Total Penjualan Shift 2</label><input id="s2-total-sales" type="number" placeholder="0" readonly></div>
+      <div class="field" style="margin-bottom:0;"><label>Total Penjualan Shift 2*</label><input id="s2-total-sales" type="number" placeholder="0" readonly></div>
       <div class="field" style="margin-bottom:0;"><label>Diskon Shift 2</label><input id="s2-discount" type="number" placeholder="0"></div>
     </div>
     <div class="field">
-      <label>Actual Sales Shift 2</label><input id="s2-actual-sales" type="number" placeholder="0" readonly>
+      <label>Actual Sales Shift 2*</label><input id="s2-actual-sales" type="number" placeholder="0" readonly>
     </div>
     <div class="field-row">
       <div class="field" style="margin-bottom:0;"><label>Pastry Non Bundling</label><input id="s2-pastry-non-bundling" type="number" placeholder="0"></div>
@@ -301,13 +301,13 @@
 
   <section class="card">
     <h2>Total Penjualan &amp; Diskon</h2>
-    <div class="desc">Total Sales & Total Discount dijumlahkan otomatis dari Shift 1 + Shift 2. Actual Sales = Total Sales − Total Discount.</div>
+    <div class="desc">Actual Sales = Total QRIS &amp; EDC + Digital Payment + GoFood + GrabFood + ShopeeFood (Shift 1 + Shift 2). Total Sales = Actual Sales + Total Discount. *~Include Tax~.</div>
     <div class="field-row">
-      <div class="field" style="margin-bottom:0;"><label>Total Sales (Rp)</label><input id="total-sales" type="number" placeholder="0" readonly></div>
+      <div class="field" style="margin-bottom:0;"><label>Total Sales (Rp)*</label><input id="total-sales" type="number" placeholder="0" readonly></div>
       <div class="field" style="margin-bottom:0;"><label>Total Discount (Rp)</label><input id="total-discount" type="number" placeholder="0" readonly></div>
     </div>
     <div class="field" style="margin-bottom:0;">
-      <label>Actual Sales (Rp)</label><input id="total-actual-sales" type="number" placeholder="0" readonly>
+      <label>Actual Sales (Rp)*</label><input id="total-actual-sales" type="number" placeholder="0" readonly>
     </div>
   </section>
 
@@ -319,12 +319,14 @@
   <section class="card">
     <h2>Ringkasan (otomatis)</h2>
     <div class="summary-grid">
-      <div class="stat"><div class="label">Total Shift 1</div><div class="value" id="sum-shift1">Rp. 0</div></div>
-      <div class="stat"><div class="label">Total Shift 2</div><div class="value" id="sum-shift2">Rp. 0</div></div>
-      <div class="stat wide accent"><div class="label">Actual Sales (Sales − Diskon)</div><div class="value" id="sum-actual">Rp. 0</div></div>
+      <div class="stat"><div class="label">Total Shift 1*</div><div class="value" id="sum-shift1">Rp. 0</div></div>
+      <div class="stat"><div class="label">Total Shift 2*</div><div class="value" id="sum-shift2">Rp. 0</div></div>
+      <div class="stat wide"><div class="label">Total Diskon</div><div class="value" id="sum-discount">Rp. 0</div></div>
+      <div class="stat wide accent"><div class="label">Actual Sales*</div><div class="value" id="sum-actual">Rp. 0</div></div>
       <div class="stat"><div class="label">Total Drinks Cup</div><div class="value" id="sum-cup">0 cup</div></div>
       <div class="stat olive"><div class="label">Ach Cup</div><div class="value" id="sum-ach">0.0%</div></div>
     </div>
+    <div class="desc" style="margin:10px 0 0;">*Actual Sales &amp; Total Penjualan ~Include Tax~.</div>
   </section>
 
   <section class="card">
@@ -430,10 +432,16 @@ function getShiftValues(prefix){
   const ber5 = num($('#' + prefix + '-ber5').value);
   const ber7 = num($('#' + prefix + '-ber7').value);
   const cup = cupNonBundling + (b2g3 * 3) + (bundlingPastryCup * 1) + (ber3 * 3) + (ber5 * 5) + (ber7 * 7);
+  const discount = num($('#' + prefix + '-discount').value);
+  // Actual Sales = total dari QRIS & EDC + Digital Payment + GoFood + GrabFood + ShopeeFood
+  const actual = pays.reduce((a,b)=>a+b,0);
+  // Total Penjualan (gross, sebelum diskon) = Actual Sales + Diskon
+  const total = actual + discount;
   return {
     pays,
-    total: pays.reduce((a,b)=>a+b,0),
-    discount: num($('#' + prefix + '-discount').value),
+    total,
+    actual,
+    discount,
     pastryNonBundling: num($('#' + prefix + '-pastry-non-bundling').value),
     cupNonBundling, b2g3, bundlingPastryCup, ber3, ber5, ber7,
     cup,
@@ -451,14 +459,15 @@ function recalc(){
 
   $('#s1-total-sales').value = s1.total;
   $('#s2-total-sales').value = s2.total;
-  $('#s1-actual-sales').value = s1.total - s1.discount;
-  $('#s2-actual-sales').value = s2.total - s2.discount;
+  $('#s1-actual-sales').value = s1.actual;
+  $('#s2-actual-sales').value = s2.actual;
 
-  const totalSales = s1.total + s2.total;
-  $('#total-sales').value = totalSales;
+  const totalActual = s1.actual + s2.actual;
   const totalDiscount = s1.discount + s2.discount;
+  const totalSales = totalActual + totalDiscount;
+  $('#total-sales').value = totalSales;
   $('#total-discount').value = totalDiscount;
-  const actualSales = totalSales - totalDiscount;
+  const actualSales = totalActual;
   $('#total-actual-sales').value = actualSales;
 
   const target = num($('#target').value);
@@ -474,6 +483,7 @@ function recalc(){
   // Summary cards
   $('#sum-shift1').textContent = rp(s1.total);
   $('#sum-shift2').textContent = rp(s2.total);
+  $('#sum-discount').textContent = rp(totalDiscount);
   $('#sum-actual').textContent = rp(actualSales);
   $('#sum-cup').textContent = totalCup + ' cup';
   $('#sum-ach').textContent = ach.toFixed(1) + '%';
@@ -497,9 +507,9 @@ function recalc(){
   lines.push('');
   lines.push('SHIFT 1');
   payLabels.forEach((label,i) => lines.push(`- ${label} : ${rp(s1.pays[i])}`));
-  lines.push(`TOTAL Shift 1 : ${rp(s1.total)}`);
+  lines.push(`TOTAL Shift 1* : ${rp(s1.total)}`);
   lines.push(`Diskon Shift 1 : ${rp(s1.discount)}`);
-  lines.push(`Actual Sales Shift 1 : ${rp(s1.total - s1.discount)}`);
+  lines.push(`Actual Sales Shift 1* : ${rp(s1.actual)}`);
   lines.push('');
   lines.push(`Drinks Cup : ${s1.cup} cup`);
   lines.push(`Pastry : ${s1.pastry} pcs`);
@@ -514,9 +524,9 @@ function recalc(){
   if(shift2HasData){
     lines.push('SHIFT 2');
     payLabels.forEach((label,i) => lines.push(`- ${label} : ${rp(s2.pays[i])}`));
-    lines.push(`TOTAL Shift 2 : ${rp(s2.total)}`);
+    lines.push(`TOTAL Shift 2* : ${rp(s2.total)}`);
     lines.push(`Diskon Shift 2 : ${rp(s2.discount)}`);
-    lines.push(`Actual Sales Shift 2 : ${rp(s2.total - s2.discount)}`);
+    lines.push(`Actual Sales Shift 2* : ${rp(s2.actual)}`);
     lines.push('');
     lines.push(`Drinks Cup : ${s2.cup} cup`);
     lines.push(`Pastry : ${s2.pastry} pcs`);
@@ -527,9 +537,10 @@ function recalc(){
     lines.push('');
   }
   lines.push('DAILY SUMMARY');
-  lines.push(`Total Sales : ${rp(totalSales)}`);
+  lines.push(`Total Sales* : ${rp(totalSales)}`);
   lines.push(`Total Discount : ${rp(totalDiscount)}`);
-  lines.push(`Actual Sales : ${rp(actualSales)}`);
+  lines.push(`Actual Sales* : ${rp(actualSales)}`);
+  lines.push('*~Include Tax~');
   lines.push('');
   lines.push('Total Shift 1 & 2');
   payLabels.forEach((label,i) => lines.push(`- ${label} : ${rp(paySumTotal[i])}`));
