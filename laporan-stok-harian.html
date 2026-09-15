@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Laporan Stok Harian — A Better Cup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FBF6EC;
+    --paper-deep:#F1E8D8;
+    --ink:#1E4B39;
+    --ink-soft:#57685A;
+    --rust:#C4841E;
+    --rust-deep:#8C5A0E;
+    --olive:#2F6B3E;
+    --line:#D9CDAF;
+    --card:#FFFFFF;
+    --radius:4px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Public Sans', sans-serif;
+    line-height:1.5;
+    padding-bottom:60px;
+  }
+  .wrap{max-width:560px;margin:0 auto;padding:28px 18px 0;}
+  header.top{padding:4px 4px 16px;border-bottom:1px solid var(--line);margin-bottom:18px;}
+  .logo{display:block;height:44px;width:auto;margin-bottom:14px;}
+  .kicker{font-size:12px;letter-spacing:.04em;color:var(--rust);font-weight:600;margin-bottom:3px;}
+  h1{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:30px;
+    margin:0 0 4px;
+    line-height:1.05;
+    color:var(--ink);
+  }
+  .sub{color:var(--ink-soft);font-size:13px;max-width:38ch;margin:0;}
+
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+  .field{margin-bottom:16px;}
+  .field label{display:block;font-size:12.5px;color:var(--ink-soft);margin-bottom:5px;font-weight:600;}
+  input[type=text], input[type=number], input[type=date]{
+    width:100%;
+    min-height:48px;
+    padding:12px 13px;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    background:var(--card);
+    color:var(--ink);
+    font-size:16px;
+    font-family:inherit;
+    -webkit-appearance:none;
+    appearance:none;
+  }
+  input[type=number]{-moz-appearance:textfield;}
+  input:focus{outline:2px solid var(--rust);outline-offset:1px;}
+  input::placeholder{color:#B9A98F;}
+  input[readonly]{background:var(--paper-deep);color:var(--ink);font-weight:600;}
+
+  select{
+    width:100%;
+    min-height:48px;
+    padding:12px 13px;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    background:var(--card);
+    color:var(--ink);
+    font-size:15px;
+    font-family:inherit;
+    -webkit-appearance:none;
+    appearance:none;
+  }
+  select:focus{outline:2px solid var(--rust);outline-offset:1px;}
+
+  section.card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:18px 16px;
+    margin-bottom:16px;
+  }
+  .card h2{
+    font-family:'Fraunces', serif;
+    font-size:19px;
+    font-weight:600;
+    margin:0 0 2px;
+  }
+  .card .desc{font-size:12px;color:var(--ink-soft);margin-bottom:12px;}
+
+  .supplier-label{
+    font-size:12.5px;color:var(--rust-deep);font-weight:700;margin:16px 0 10px;
+    padding-top:12px;border-top:1px dashed var(--line);
+  }
+  .supplier-label:first-of-type{border-top:none;padding-top:0;margin-top:0;}
+
+  .stock-item{margin-bottom:12px;}
+  .stock-item-name{font-size:13px;font-weight:600;margin-bottom:6px;color:var(--ink);}
+  .stock-item-inputs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;}
+  .stock-item-inputs .mini label{display:block;font-size:10px;color:var(--ink-soft);margin-bottom:4px;}
+  .stock-item-inputs input{min-height:40px;padding:8px 9px;font-size:14px;}
+
+  .stock-subtotal{
+    background:var(--paper-deep);border-radius:6px;padding:11px 12px;margin:6px 0 18px;
+  }
+  .stock-subtotal-title{font-size:12px;font-weight:700;margin-bottom:8px;color:var(--rust-deep);}
+  .stock-subtotal-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;}
+  .stock-subtotal-grid .mini label{display:block;font-size:10px;color:var(--ink-soft);margin-bottom:4px;}
+  .stock-subtotal-grid input{min-height:38px;padding:7px 8px;font-size:13.5px;}
+
+  .stock-grand{
+    background:var(--ink);color:#EFE6D6;border-radius:6px;padding:13px 14px;margin:4px 0 18px;
+  }
+  .stock-grand-title{font-family:'Fraunces',serif;font-size:15px;font-weight:600;margin-bottom:9px;}
+  .stock-grand-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+  .stock-grand-grid.cols2{grid-template-columns:1fr 1fr;row-gap:14px;}
+  .stock-grand-grid .g-label{font-size:10.5px;color:#C9BFA8;margin-bottom:3px;}
+  .stock-grand-grid .g-value{font-family:'Fraunces',serif;font-size:18px;font-weight:600;}
+
+  .col-headers{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin:2px 0 10px;}
+  .col-headers span{font-size:10px;color:var(--ink-soft);font-weight:700;text-align:left;}
+
+  .summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:2px;}
+  .stat{background:var(--paper-deep);border-radius:6px;padding:12px 13px;}
+  .stat .label{font-size:11.5px;color:var(--ink-soft);margin-bottom:4px;}
+  .stat .value{font-family:'Fraunces',serif;font-size:20px;font-weight:600;}
+  .stat.wide{grid-column:1/-1;}
+  .stat.accent .value{color:var(--rust-deep);}
+  .stat.olive .value{color:var(--olive);}
+
+  .preview-box{
+    background:var(--ink);
+    color:#EFE6D6;
+    font-family:'SF Mono', Menlo, Consolas, monospace;
+    font-size:12.5px;
+    line-height:1.65;
+    white-space:pre-wrap;
+    padding:16px 15px;
+    border-radius:6px;
+    max-height:340px;
+    overflow-y:auto;
+  }
+
+  .actions{display:flex;gap:10px;margin-top:14px;}
+  button{
+    flex:1;
+    min-height:50px;
+    padding:14px 10px;
+    border-radius:6px;
+    border:none;
+    font-family:'Public Sans',sans-serif;
+    font-weight:600;
+    font-size:15px;
+    cursor:pointer;
+  }
+  .btn-primary{background:var(--rust);color:#fff;}
+  .btn-primary:hover{background:var(--rust-deep);}
+  .btn-secondary{background:var(--paper-deep);color:var(--ink);border:1px solid var(--line);}
+  .btn-secondary:hover{background:#E9DCC3;}
+
+  .foot-note{text-align:center;color:var(--ink-soft);font-size:11px;margin:14px 0 4px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="kicker">STOK HARIAN</div>
+    <h1>Laporan Stok Harian<br>Pastry &amp; Mineral</h1>
+    <p class="sub">Hitung stok H-1, barang masuk, dan stok fisik hari ini. Selisih dihitung otomatis.</p>
+  </header>
+
+  <section class="card">
+    <h2>Outlet &amp; Tanggal</h2>
+    <div class="desc">Pilih outlet dari daftar. Kalau belum ada, pilih "Others" lalu ketik nama outlet.</div>
+    <div class="field">
+      <label for="outlet-select">Nama Outlet</label>
+      <select id="outlet-select">
+        <option value="">Pilih outlet</option>
+        <option value="A Better Cup Untar Jakarta Barat">A Better Cup Untar Jakarta Barat</option>
+        <option value="A Better Cup Tebet Jakarta Selatan" selected>A Better Cup Tebet Jakarta Selatan</option>
+        <option value="A Better Cup Depok Kelapa Dua">A Better Cup Depok Kelapa Dua</option>
+        <option value="A Better Cup Tunjungan Surabaya">A Better Cup Tunjungan Surabaya</option>
+        <option value="A Better Cup Petra">A Better Cup Petra</option>
+        <option value="A Better Cup Mulyosari">A Better Cup Mulyosari</option>
+        <option value="__other__">Others</option>
+      </select>
+      <input id="outlet-custom" type="text" placeholder="Tulis nama outlet" style="display:none;margin-top:8px;">
+    </div>
+    <div class="field">
+      <label for="tanggal">Tanggal</label>
+      <input id="tanggal" type="date">
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Stok Pastry &amp; Mineral</h2>
+    <div class="desc">Total Stok H-1, Barang Masuk, Barang Keluar (Intra), dan Total Jual diisi manual (angka total). Per item isi Stok Hari Ini dan Waste/ED — Good Stock dihitung otomatis.</div>
+
+    <div class="field-row">
+      <div class="field" style="margin-bottom:0;"><label>Total Stok H-1 Pastry</label><input id="total-h1-pastry" type="number" placeholder="0"></div>
+      <div class="field" style="margin-bottom:0;"><label>Total Barang Masuk Pastry</label><input id="total-masuk-pastry" type="number" placeholder="0"></div>
+    </div>
+    <div class="field-row">
+      <div class="field" style="margin-bottom:0;"><label>Barang Keluar (Intra)</label><input id="total-keluar-intra-pastry" type="number" placeholder="0"></div>
+      <div class="field" style="margin-bottom:0;"><label>Total Jual Hari Ini</label><input id="total-jual-pastry" type="number" placeholder="0"></div>
+    </div>
+
+    <div id="pastry-container"></div>
+
+    <div class="stock-grand">
+      <div class="stock-grand-title">GRAND TOTAL PASTRY — PERGERAKAN</div>
+      <div class="stock-grand-grid cols2">
+        <div><div class="g-label">Stok H-1</div><div class="g-value" id="grand-h1">0</div></div>
+        <div><div class="g-label">Barang Masuk</div><div class="g-value" id="grand-masuk">0</div></div>
+        <div><div class="g-label">Barang Keluar (Intra)</div><div class="g-value" id="grand-keluar">0</div></div>
+        <div><div class="g-label">Total Jual</div><div class="g-value" id="grand-jual">0</div></div>
+      </div>
+    </div>
+
+    <div class="stock-grand">
+      <div class="stock-grand-title">GRAND TOTAL PASTRY — HASIL STOK FISIK</div>
+      <div class="stock-grand-grid cols2">
+        <div><div class="g-label">Stok Hari Ini</div><div class="g-value" id="grand-today">0</div></div>
+        <div><div class="g-label">Stok Waste/ED</div><div class="g-value" id="grand-waste">0</div></div>
+        <div><div class="g-label">Total Good Stock</div><div class="g-value" id="grand-good">0</div></div>
+        <div><div class="g-label">Selisih</div><div class="g-value" id="grand-selisih">0</div></div>
+      </div>
+    </div>
+
+    <div class="supplier-label">STOK MINERAL</div>
+    <div class="col-headers">
+      <span>Stok H-1</span><span>Barang Masuk</span><span>Terjual</span>
+    </div>
+    <div class="stock-item-inputs">
+      <div class="mini"><input id="mineral-h1" type="number" placeholder="0"></div>
+      <div class="mini"><input id="mineral-masuk" type="number" placeholder="0"></div>
+      <div class="mini"><input id="mineral-jual" type="number" placeholder="0"></div>
+    </div>
+    <div class="field" style="margin-top:10px;">
+      <label>Stok Closing Mineral (hasil hitung fisik)</label>
+      <input id="mineral-closing" type="number" placeholder="0">
+    </div>
+
+    <div class="supplier-label">STOK TUMBLER</div>
+    <div class="col-headers">
+      <span>Stok H-1</span><span>Barang Masuk</span><span>Terjual</span>
+    </div>
+    <div class="stock-item-inputs">
+      <div class="mini"><input id="tumbler-h1" type="number" placeholder="0"></div>
+      <div class="mini"><input id="tumbler-masuk" type="number" placeholder="0"></div>
+      <div class="mini"><input id="tumbler-jual" type="number" placeholder="0"></div>
+    </div>
+    <div class="field" style="margin-top:10px;">
+      <label>Stok Closing Tumbler (hasil hitung fisik)</label>
+      <input id="tumbler-closing" type="number" placeholder="0">
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Ringkasan Otomatis</h2>
+    <div class="summary-grid">
+      <div class="stat"><div class="label">Total Stok H-1 Pastry</div><div class="value" id="sum-h1-pastry">0</div></div>
+      <div class="stat"><div class="label">Total Barang Masuk Pastry</div><div class="value" id="sum-masuk-pastry">0</div></div>
+      <div class="stat"><div class="label">Barang Keluar (Intra)</div><div class="value" id="sum-keluar-pastry">0</div></div>
+      <div class="stat accent"><div class="label">Total Jual Pastry</div><div class="value" id="sum-jual-pastry">0</div></div>
+      <div class="stat"><div class="label">Total Waste/ED Pastry</div><div class="value" id="sum-waste-pastry">0</div></div>
+      <div class="stat olive"><div class="label">Total Good Stock Pastry</div><div class="value" id="sum-closing-pastry">0</div></div>
+      <div class="stat wide accent"><div class="label">Total Stok Seharusnya (Otomatis)</div><div class="value" id="sum-expected-pastry">0</div></div>
+      <div class="stat wide"><div class="label">Selisih Pastry (Seharusnya − Good Stock)</div><div class="value" id="sum-selisih-pastry">0</div></div>
+      <div class="stat"><div class="label">Stok H-1 Mineral</div><div class="value" id="sum-h1-mineral">0</div></div>
+      <div class="stat"><div class="label">Barang Masuk Mineral</div><div class="value" id="sum-masuk-mineral">0</div></div>
+      <div class="stat accent"><div class="label">Terjual Mineral</div><div class="value" id="sum-jual-mineral">0</div></div>
+      <div class="stat olive"><div class="label">Stok Closing Mineral</div><div class="value" id="sum-closing-mineral">0</div></div>
+      <div class="stat wide accent"><div class="label">Stok Seharusnya Mineral (Otomatis)</div><div class="value" id="sum-expected-mineral">0</div></div>
+      <div class="stat wide"><div class="label">Selisih Mineral (Seharusnya − Aktual)</div><div class="value" id="sum-selisih-mineral">0</div></div>
+      <div class="stat"><div class="label">Stok H-1 Tumbler</div><div class="value" id="sum-h1-tumbler">0</div></div>
+      <div class="stat"><div class="label">Barang Masuk Tumbler</div><div class="value" id="sum-masuk-tumbler">0</div></div>
+      <div class="stat accent"><div class="label">Terjual Tumbler</div><div class="value" id="sum-jual-tumbler">0</div></div>
+      <div class="stat olive"><div class="label">Stok Closing Tumbler</div><div class="value" id="sum-closing-tumbler">0</div></div>
+      <div class="stat wide accent"><div class="label">Stok Seharusnya Tumbler (Otomatis)</div><div class="value" id="sum-expected-tumbler">0</div></div>
+      <div class="stat wide"><div class="label">Selisih Tumbler (Seharusnya − Aktual)</div><div class="value" id="sum-selisih-tumbler">0</div></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Preview Laporan</h2>
+    <div class="desc">Format ini persis yang akan dikirim ke WhatsApp.</div>
+    <div class="preview-box" id="preview"></div>
+    <div class="actions">
+      <button class="btn-primary" id="btn-wa">Kirim ke WhatsApp</button>
+      <button class="btn-secondary" id="btn-copy">Salin Teks</button>
+    </div>
+  </section>
+
+  <p class="foot-note">Semua perhitungan berjalan di perangkat Anda — tidak ada data yang dikirim ke server.</p>
+</div>
+
+<script>
+const $ = (sel, ctx=document) => ctx.querySelector(sel);
+const $$ = (sel, ctx=document) => Array.from(ctx.querySelectorAll(sel));
+const num = v => { const n = parseFloat(v); return isNaN(n) ? 0 : n; };
+
+const hariNama = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+const bulanNama = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+function formatTanggal(dateStr){
+  if(!dateStr) return '';
+  const d = new Date(dateStr + 'T00:00:00');
+  return `${hariNama[d.getDay()]} ${String(d.getDate()).padStart(2,'0')} ${bulanNama[d.getMonth()]} ${d.getFullYear()}`;
+}
+function slugify(s){
+  return s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+}
+
+const pastryData = [
+  { supplier: 'Satya Utama Boga', items: [
+    'Almond Croissant','Butter Croissant','Chicken Curry Puff',
+    'Chicken Mushroom Puff','Korean Garlic Salt Bread','Pain au Chocolate',
+    'Panini Beef Cheese','Rendang Puff',
+    'Smoke Beef Cheese Salt Bread'
+  ]},
+  { supplier: 'Sourdjo', items: [
+    'Sourdough Cranberry Creamcheese','Sourdough Death By Chocolate'
+  ]},
+];
+
+// Build item rows + subtotal blocks
+const pastryContainer = $('#pastry-container');
+pastryData.forEach((group, gi) => {
+  const label = document.createElement('div');
+  label.className = 'supplier-label';
+  label.textContent = group.supplier.toUpperCase();
+  pastryContainer.appendChild(label);
+
+  const colHeader = document.createElement('div');
+  colHeader.className = 'col-headers';
+  colHeader.innerHTML = '<span>Stok Hari Ini</span><span>Waste/ED</span><span>Good Stock</span>';
+  pastryContainer.appendChild(colHeader);
+
+  group.items.forEach((itemName, ii) => {
+    const slug = `p-${gi}-${ii}-${slugify(itemName)}`;
+    const item = document.createElement('div');
+    item.className = 'stock-item';
+    item.innerHTML = `
+      <div class="stock-item-name">${itemName}</div>
+      <div class="stock-item-inputs">
+        <div class="mini"><input id="${slug}-today" type="number" placeholder="0" data-group="${gi}"></div>
+        <div class="mini"><input id="${slug}-waste" type="number" placeholder="0" data-group="${gi}"></div>
+        <div class="mini"><input id="${slug}-good" type="number" placeholder="0" readonly></div>
+      </div>
+    `;
+    pastryContainer.appendChild(item);
+  });
+
+  const subtotal = document.createElement('div');
+  subtotal.className = 'stock-subtotal';
+  subtotal.innerHTML = `
+    <div class="stock-subtotal-title">Subtotal ${group.supplier}</div>
+    <div class="stock-subtotal-grid">
+      <div class="mini"><label>Stok Hari Ini</label><input id="subtotal-${gi}-today" type="number" readonly></div>
+      <div class="mini"><label>Waste/ED</label><input id="subtotal-${gi}-waste" type="number" readonly></div>
+      <div class="mini"><label>Good Stock</label><input id="subtotal-${gi}-good" type="number" readonly></div>
+    </div>
+  `;
+  pastryContainer.appendChild(subtotal);
+});
+
+function recalc(){
+  let grandToday = 0, grandWaste = 0, grandGood = 0;
+
+  pastryData.forEach((group, gi) => {
+    let subToday = 0, subWaste = 0, subGood = 0;
+    group.items.forEach((itemName, ii) => {
+      const slug = `p-${gi}-${ii}-${slugify(itemName)}`;
+      const today = num($('#' + slug + '-today').value);
+      const waste = num($('#' + slug + '-waste').value);
+      const good = today - waste;
+      $('#' + slug + '-good').value = good;
+      subToday += today; subWaste += waste; subGood += good;
+    });
+    $('#subtotal-' + gi + '-today').value = subToday;
+    $('#subtotal-' + gi + '-waste').value = subWaste;
+    $('#subtotal-' + gi + '-good').value = subGood;
+    grandToday += subToday; grandWaste += subWaste; grandGood += subGood;
+  });
+
+  const grandH1 = num($('#total-h1-pastry').value);
+  const grandMasuk = num($('#total-masuk-pastry').value);
+  const grandKeluar = num($('#total-keluar-intra-pastry').value);
+  const jualPastry = num($('#total-jual-pastry').value);
+
+  const expectedStockPastry = grandH1 + grandMasuk - grandKeluar - grandWaste - jualPastry;
+  const selisihPastry = expectedStockPastry - grandGood;
+
+  $('#grand-h1').textContent = grandH1;
+  $('#grand-masuk').textContent = grandMasuk;
+  $('#grand-keluar').textContent = grandKeluar;
+  $('#grand-jual').textContent = jualPastry;
+  $('#grand-today').textContent = grandToday;
+  $('#grand-waste').textContent = grandWaste;
+  $('#grand-good').textContent = grandGood;
+  $('#grand-selisih').textContent = selisihPastry;
+
+  const mineralH1 = num($('#mineral-h1').value);
+  const mineralMasuk = num($('#mineral-masuk').value);
+  const mineralJual = num($('#mineral-jual').value);
+  const mineralClosing = num($('#mineral-closing').value);
+  const expectedClosingMineral = mineralH1 + mineralMasuk - mineralJual;
+  const selisihMineral = expectedClosingMineral - mineralClosing;
+
+  $('#sum-h1-pastry').textContent = grandH1;
+  $('#sum-masuk-pastry').textContent = grandMasuk;
+  $('#sum-keluar-pastry').textContent = grandKeluar;
+  $('#sum-jual-pastry').textContent = jualPastry;
+  $('#sum-waste-pastry').textContent = grandWaste;
+  $('#sum-closing-pastry').textContent = grandGood;
+  $('#sum-expected-pastry').textContent = expectedStockPastry;
+  $('#sum-selisih-pastry').textContent = selisihPastry;
+
+  $('#sum-h1-mineral').textContent = mineralH1;
+  $('#sum-masuk-mineral').textContent = mineralMasuk;
+  $('#sum-jual-mineral').textContent = mineralJual;
+  $('#sum-closing-mineral').textContent = mineralClosing;
+  $('#sum-expected-mineral').textContent = expectedClosingMineral;
+  $('#sum-selisih-mineral').textContent = selisihMineral;
+
+  const tumblerH1 = num($('#tumbler-h1').value);
+  const tumblerMasuk = num($('#tumbler-masuk').value);
+  const tumblerJual = num($('#tumbler-jual').value);
+  const tumblerClosing = num($('#tumbler-closing').value);
+  const expectedClosingTumbler = tumblerH1 + tumblerMasuk - tumblerJual;
+  const selisihTumbler = expectedClosingTumbler - tumblerClosing;
+
+  $('#sum-h1-tumbler').textContent = tumblerH1;
+  $('#sum-masuk-tumbler').textContent = tumblerMasuk;
+  $('#sum-jual-tumbler').textContent = tumblerJual;
+  $('#sum-closing-tumbler').textContent = tumblerClosing;
+  $('#sum-expected-tumbler').textContent = expectedClosingTumbler;
+  $('#sum-selisih-tumbler').textContent = selisihTumbler;
+
+  // Build preview text
+  const DIV = '─────────────────────';
+  const outletSelectVal = $('#outlet-select').value;
+  const outlet = (outletSelectVal === '__other__' ? $('#outlet-custom').value.trim() : outletSelectVal) || 'Outlet';
+  const tanggal = formatTanggal($('#tanggal').value) || '(pilih tanggal)';
+
+  let lines = [];
+  lines.push(`*LAPORAN STOK HARIAN — PASTRY & MINERAL*`);
+  lines.push(`*${outlet.toUpperCase()}*`);
+  lines.push(`${tanggal}`);
+  lines.push(DIV);
+
+  lines.push(`Total Barang Masuk Pastry : ${grandMasuk}`);
+  lines.push(`Barang Keluar (Intra) : ${grandKeluar}`);
+  lines.push(`Total Jual Hari Ini : ${jualPastry}`);
+  lines.push('');
+
+  const wasteItems = [];
+  pastryData.forEach((group, gi) => {
+    lines.push(`_${group.supplier}_`);
+    let subGood = 0;
+    group.items.forEach((itemName, ii) => {
+      const slug = `p-${gi}-${ii}-${slugify(itemName)}`;
+      const today = num($('#' + slug + '-today').value);
+      const waste = num($('#' + slug + '-waste').value);
+      const good = today - waste;
+      subGood += good;
+      lines.push(`${itemName} : ${good}`);
+      if(waste > 0) wasteItems.push({ name: itemName, waste });
+    });
+    lines.push(`*Subtotal ${group.supplier}* : ${subGood}`);
+    lines.push('');
+  });
+
+  const formatSelisih = v => v > 0 ? `-${v}` : v < 0 ? `+${Math.abs(v)}` : '0';
+
+  lines.push(DIV);
+  lines.push(`*REKAP STOK PASTRY*`);
+  lines.push(`Stok H-1 Pastry : ${grandH1}`);
+  lines.push(`Stok Hari Ini : ${grandToday}`);
+  lines.push(`Stok Waste/ED : ${grandWaste}`);
+  lines.push(`*Total Good Stock Pastry* : ${grandGood}`);
+  lines.push(`Total Stok Seharusnya (Otomatis) : ${expectedStockPastry}`);
+  lines.push(`Selisih Pastry : ${formatSelisih(selisihPastry)}`);
+  if(wasteItems.length){
+    lines.push('');
+    lines.push(`_Rincian Waste/ED:_`);
+    wasteItems.forEach(w => lines.push(`${w.name} : ${w.waste}`));
+  }
+  lines.push(DIV);
+
+  lines.push(`*REKAP STOK MINERAL*`);
+  lines.push(`Stok H-1 Mineral : ${mineralH1}`);
+  lines.push(`Barang Masuk Mineral : ${mineralMasuk}`);
+  lines.push(`Terjual Mineral : ${mineralJual}`);
+  lines.push(`*Stok Closing Mineral* : ${mineralClosing}`);
+  lines.push(`Stok Seharusnya Mineral (Otomatis) : ${expectedClosingMineral}`);
+  lines.push(`Selisih Mineral : ${formatSelisih(selisihMineral)}`);
+  lines.push(DIV);
+
+  lines.push(`*REKAP STOK TUMBLER*`);
+  lines.push(`Stok H-1 Tumbler : ${tumblerH1}`);
+  lines.push(`Barang Masuk Tumbler : ${tumblerMasuk}`);
+  lines.push(`Terjual Tumbler : ${tumblerJual}`);
+  lines.push(`*Stok Closing Tumbler* : ${tumblerClosing}`);
+  lines.push(`Stok Seharusnya Tumbler (Otomatis) : ${expectedClosingTumbler}`);
+  lines.push(`Selisih Tumbler : ${formatSelisih(selisihTumbler)}`);
+  lines.push(DIV);
+  lines.push(`_Thank You_`);
+
+  const reportText = lines.join('\n');
+  $('#preview').textContent = reportText;
+  return reportText;
+}
+
+$$('input[type=number]').forEach(el => {
+  el.setAttribute('inputmode', 'numeric');
+  el.setAttribute('pattern', '[0-9]*');
+});
+
+$('#outlet-select').addEventListener('change', () => {
+  const val = $('#outlet-select').value;
+  $('#outlet-custom').style.display = val === '__other__' ? 'block' : 'none';
+  if(val !== '__other__') $('#outlet-custom').value = '';
+  recalc();
+});
+
+document.addEventListener('input', recalc);
+
+$('#btn-copy').addEventListener('click', () => {
+  const text = recalc();
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = $('#btn-copy');
+    const original = btn.textContent;
+    btn.textContent = 'Tersalin ✓';
+    setTimeout(() => btn.textContent = original, 1500);
+  });
+});
+
+$('#btn-wa').addEventListener('click', () => {
+  const text = recalc();
+  const url = 'https://wa.me/?text=' + encodeURIComponent(text);
+  window.open(url, '_blank');
+});
+
+$('#tanggal').valueAsDate = new Date();
+recalc();
+</script>
+</body>
+</html>
