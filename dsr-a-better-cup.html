@@ -306,6 +306,9 @@
       <div class="field" style="margin-bottom:0;"><label>Total Sales (Rp)</label><input id="total-sales" type="number" placeholder="0" readonly></div>
       <div class="field" style="margin-bottom:0;"><label>Total Discount (Rp)</label><input id="total-discount" type="number" placeholder="0" readonly></div>
     </div>
+    <div class="field" style="margin-bottom:0;">
+      <label>Actual Sales (Rp)</label><input id="total-actual-sales" type="number" placeholder="0" readonly>
+    </div>
   </section>
 
   <section class="card">
@@ -456,6 +459,7 @@ function recalc(){
   const totalDiscount = s1.discount + s2.discount;
   $('#total-discount').value = totalDiscount;
   const actualSales = totalSales - totalDiscount;
+  $('#total-actual-sales').value = actualSales;
 
   const target = num($('#target').value);
   const totalCup = s1.cup + s2.cup;
