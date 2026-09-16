@@ -469,6 +469,18 @@ function pick(row, candidates){
   return '';
 }
 
+// Google Sheets kadang publish jam TANPA angka nol di depan (mis. "6:48:00"
+// alih-alih "06:48"). Ini merusak perbandingan teks (mis. "14:50" < "6:48"
+// secara teks). Normalisasi ke format HH:MM 2-digit supaya perbandingan aman.
+function normalizeJam(raw){
+  if(!raw) return '';
+  const s = String(raw).trim();
+  const m = s.match(/^(\d{1,2}):(\d{2})/);
+  if(!m) return s;
+  const h = m[1].padStart(2, '0');
+  return `${h}:${m[2]}`;
+}
+
 function parseIndoNumber(s){
   if(s === undefined || s === null || s === '') return null;
   const n = parseFloat(String(s).trim().replace(',', '.'));
@@ -507,7 +519,7 @@ function hitungTelat(t, jam){
 }
 
 function mapRow(row, t){
-  const jam = (pick(row, ['JAM']) || '').trim();
+  const jam = normalizeJam(pick(row, ['JAM']));
   const tglRaw = pick(row, ['Tanggal']);
   const tel = hitungTelat(t, jam);
   return {
