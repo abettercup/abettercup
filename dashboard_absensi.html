@@ -527,9 +527,15 @@ function mapRow(row, t){
   };
 }
 
+// Google Sheets yang di-publish sebagai CSV (File > Share > Publish to web > CSV)
+const SHEET_IN_URL  = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQYP91vQr2jZZ_LLBOlLuDk-ZybHyFmO1843lMmysuKa6YdLFzK3FdFGTeIuJCPAw038JKcicOAkAga/pub?output=csv';
+const SHEET_OUT_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRdIw4uOcBof5i4I2AV0rfhvnm1N3nPJ801DYXRIgXGbfcO6kkHygDL9Co-3EWHxc2OdalnGYZcVxoB/pub?output=csv';
+
 function loadCsv(url){
+  // tambahkan parameter waktu supaya browser/Google tidak mengembalikan versi cache lama
+  const bustedUrl = url + (url.includes('?') ? '&' : '?') + 'cachebust=' + Date.now();
   return new Promise((resolve, reject) => {
-    Papa.parse(url, {
+    Papa.parse(bustedUrl, {
       download: true,
       header: true,
       skipEmptyLines: true,
@@ -542,18 +548,18 @@ function loadCsv(url){
 async function loadData(){
   try {
     const [inRows, outRows] = await Promise.all([
-      loadCsv('IN.csv'),
-      loadCsv('OUT.csv'),
+      loadCsv(SHEET_IN_URL),
+      loadCsv(SHEET_OUT_URL),
     ]);
     RAW_DATA = [
       ...inRows.map(r => mapRow(r, 'masuk')),
       ...outRows.map(r => mapRow(r, 'keluar')),
     ].filter(r => r.nama && r.tgl && r.jam);
   } catch(err) {
-    console.error('Gagal memuat data CSV (IN.csv / OUT.csv):', err);
+    console.error('Gagal memuat data dari Google Sheets (IN/OUT):', err);
     document.querySelector('main').insertAdjacentHTML('afterbegin',
       `<div style="background:#fdecea;color:#611a15;padding:12px 16px;border-radius:8px;margin-bottom:16px;">
-        Gagal memuat data dari IN.csv / OUT.csv. Pastikan kedua file tersebut berada di folder yang sama dengan dashboard ini.
+        Gagal memuat data dari Google Sheets. Pastikan sheet IN &amp; OUT masih ter-publish ke web (File &gt; Share &gt; Publish to web) dan koneksi internet aktif.
       </div>`);
     RAW_DATA = [];
   }
