@@ -468,6 +468,28 @@
     </div>
   </section>
 
+  <section class="panel">
+    <h2>Rekap absensi per tanggal, per nama karyawan</h2>
+    <div class="panel-desc">Jam Masuk &amp; Jam Keluar diambil dari Tgl Absen System. Jam Kerja dihitung dari Jam Keluar dikurangi Jam Masuk.</div>
+    <div class="table-scroll">
+      <table id="tblRekapTanggal">
+        <thead>
+          <tr>
+            <th data-key="tgl">Tanggal Absen <span class="arrow"></span></th>
+            <th data-key="nama">Nama Karyawan <span class="arrow"></span></th>
+            <th data-key="divisi">Divisi / Jabatan <span class="arrow"></span></th>
+            <th data-key="kota">Kota <span class="arrow"></span></th>
+            <th data-key="outlet">Lokasi Outlet <span class="arrow"></span></th>
+            <th data-key="jamMasuk">Jam Masuk <span class="arrow"></span></th>
+            <th data-key="jamKeluar">Jam Keluar <span class="arrow"></span></th>
+            <th data-key="jamKerja">Jam Kerja <span class="arrow"></span></th>
+          </tr>
+        </thead>
+        <tbody id="tblRekapTanggalBody"></tbody>
+      </table>
+    </div>
+  </section>
+
   <footer>Dashboard dibuat dari data ABSENSI_MASUK &amp; ABSENSI_KELUAR.</footer>
 </main>
 
@@ -728,6 +750,7 @@ function init(){
   updateArrows('#tblTidakLengkap', tidakLengkapSort);
   updateArrows('#tblAbsensiKaryawan', absensiKaryawanSort);
   updateArrows('#tblTidakLengkapRank', tidakLengkapRankSort);
+  updateArrows('#tblRekapTanggal', rekapTanggalSort);
   refreshDependentOptions();
   renderAll();
 }
@@ -960,6 +983,7 @@ function renderAbsensiKaryawanTable(data){
 }
 
 let tidakLengkapRankSort = {key:'keterangan', dir:'desc'};
+let rekapTanggalSort = {key:'tgl', dir:'desc'};
 
 function renderTidakLengkapRanking(data){
   const scoped = data.filter(r => r.divisi === 'Barista' || r.divisi === 'Part Timer');
@@ -1021,6 +1045,65 @@ function buildTidakLengkap(data){
   });
   return rows;
 }
+
+function hitungJamKerja(jamMasuk, jamKeluar){
+  if(!jamMasuk || !jamKeluar) return '';
+  const [h1,m1] = jamMasuk.split(':').map(Number);
+  const [h2,m2] = jamKeluar.split(':').map(Number);
+  let totalMenit = (h2*60+m2) - (h1*60+m1);
+  if(totalMenit < 0) return '';
+  const jam = Math.floor(totalMenit/60);
+  const menit = totalMenit % 60;
+  return `${jam}j ${String(menit).padStart(2,'0')}m`;
+}
+
+function buildRekapTanggal(data){
+  const map = {};
+  data.forEach(r => {
+    const key = r.nama + '||' + r.tgl;
+    if(!map[key]) map[key] = {
+      tgl:r.tgl, nama:r.nama, divisi:'', kotaMasuk:'', kotaKeluar:'',
+      outletMasuk:'', outletKeluar:'', jamMasuk:'', jamKeluar:''
+    };
+    const rec = map[key];
+    rec.divisi = r.divisi;
+    if(r.t === 'masuk'){ rec.jamMasuk = r.jam; rec.outletMasuk = r.outlet; rec.kotaMasuk = r.kota_norm; }
+    else { rec.jamKeluar = r.jam; rec.outletKeluar = r.outlet; rec.kotaKeluar = r.kota_norm; }
+  });
+  return Object.values(map).map(rec => ({
+    tgl: rec.tgl,
+    nama: rec.nama,
+    divisi: rec.divisi,
+    kota: rec.kotaMasuk || rec.kotaKeluar,
+    outlet: rec.outletMasuk || rec.outletKeluar,
+    jamMasuk: rec.jamMasuk,
+    jamKeluar: rec.jamKeluar,
+    jamKerja: hitungJamKerja(rec.jamMasuk, rec.jamKeluar),
+  }));
+}
+
+function renderRekapTanggalTable(data){
+  let rows = buildRekapTanggal(data);
+  rows = sortRows(rows, rekapTanggalSort);
+  const body = document.getElementById('tblRekapTanggalBody');
+  if(!rows.length){
+    body.innerHTML = `<tr><td colspan="8" class="empty-note">Tidak ada data sesuai filter.</td></tr>`;
+    return;
+  }
+  body.innerHTML = rows.map(r => `
+    <tr>
+      <td>${fmtDate(r.tgl)}</td>
+      <td>${escapeHtml(r.nama)}</td>
+      <td>${escapeHtml(r.divisi)}</td>
+      <td>${escapeHtml(r.kota)}</td>
+      <td>${escapeHtml(r.outlet)}</td>
+      <td>${r.jamMasuk || '-'}</td>
+      <td>${r.jamKeluar || '-'}</td>
+      <td>${r.jamKerja || '-'}</td>
+    </tr>
+  `).join('');
+}
+
 
 function renderTidakLengkapTable(data){
   let rows = buildTidakLengkap(data);
@@ -1094,6 +1177,15 @@ document.querySelectorAll('#tblTidakLengkapRank thead th').forEach(th => {
     renderAll();
   });
 });
+document.querySelectorAll('#tblRekapTanggal thead th').forEach(th => {
+  th.addEventListener('click', () => {
+    const key = th.dataset.key;
+    if(rekapTanggalSort.key === key) rekapTanggalSort.dir = rekapTanggalSort.dir === 'asc' ? 'desc' : 'asc';
+    else { rekapTanggalSort.key = key; rekapTanggalSort.dir = 'desc'; }
+    updateArrows('#tblRekapTanggal', rekapTanggalSort);
+    renderAll();
+  });
+});
 function updateArrows(tableSel, state){
   document.querySelectorAll(`${tableSel} thead th`).forEach(th => {
     const arrow = th.querySelector('.arrow');
@@ -1111,6 +1203,7 @@ function renderAll(){
   renderAbsensiKaryawanTable(data);
   renderJamBukaTable(data);
   renderTidakLengkapTable(data);
+  renderRekapTanggalTable(data);
 }
 
 ['fDariTgl','fSampaiTgl','fKota','fOutlet','fLokasi','fDivisi','fNama'].forEach(id => {
@@ -1202,6 +1295,19 @@ function exportToExcel(){
     };
   });
 
+  // 5. Rekap absensi per tanggal, per nama karyawan
+  const rekapTanggalRows = buildRekapTanggal(data);
+  const sheetRekapTanggal = rekapTanggalRows.map(r => ({
+    'Tanggal Absen': fmtDate(r.tgl),
+    'Nama Karyawan': r.nama,
+    'Divisi / Jabatan': r.divisi,
+    'Kota': r.kota,
+    'Lokasi Outlet': r.outlet,
+    'Jam Masuk': r.jamMasuk || '-',
+    'Jam Keluar': r.jamKeluar || '-',
+    'Jam Kerja': r.jamKerja || '-',
+  }));
+
   const wb = XLSX.utils.book_new();
   const addSheet = (rows, name, emptyMsg) => {
     const ws = rows.length
@@ -1213,6 +1319,7 @@ function exportToExcel(){
   addSheet(sheetJamBuka, 'Jam Buka Outlet', 'Tidak ada data sesuai filter');
   addSheet(sheetAbsensi, 'Rekap Absensi Karyawan', 'Tidak ada data sesuai filter');
   addSheet(sheetDetail, 'Detail Tidak Lengkap', 'Tidak ada data sesuai filter');
+  addSheet(sheetRekapTanggal, 'Rekap Per Tanggal Karyawan', 'Tidak ada data sesuai filter');
 
   const stamp = new Date().toISOString().slice(0,10);
   XLSX.writeFile(wb, `Rekap_Absensi_${stamp}.xlsx`);
