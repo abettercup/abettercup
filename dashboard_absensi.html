@@ -396,7 +396,7 @@
 
   <section class="panel">
     <h2>Rekap jam buka outlet di atas jam 8</h2>
-    <div class="panel-desc">Menampilkan outlet yang buka setelah jam 08.00, dikelompokkan ke periode 08.00 - 08.30, 08.30 - 09.00, dan di atas 09.00.</div>
+    <div class="panel-desc">Jam Buka Outlet diambil dari Jam Absen Masuk Karyawan Pertama.</div>
     <div class="table-scroll">
       <table id="tblJamBuka">
         <thead>
@@ -491,16 +491,27 @@ const BULAN_MAP = {
   januari:1, februari:2, maret:3, april:4, mei:5, juni:6,
   juli:7, agustus:8, september:9, oktober:10, november:11, desember:12
 };
-function parseTanggalIndo(s){
-  // format: "15 September 2026 pukul 07.00 WIB"
-  if(!s) return '';
-  const m = String(s).trim().match(/(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})/);
-  if(!m) return '';
-  const day = parseInt(m[1],10);
-  const bulan = BULAN_MAP[m[2].toLowerCase()];
-  const year = parseInt(m[3],10);
-  if(!bulan) return '';
-  return `${year}-${String(bulan).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+// "Tgl Absen System" / "Tanggal Absen System" berisi tanggal + jam ASLI saat
+// karyawan submit absen, mis. "15 September 2026 pukul 07.53 WIB". Ini sumber
+// yang dipakai untuk tanggal (tgl) & jam absen (jam) — bukan kolom "Tanggal"
+// (yang cuma jadwal tetap jam 07.00) atau kolom "JAM" terpisah.
+function parseTglJamAbsenSystem(s){
+  if(!s) return {tgl:'', jam:''};
+  const str = String(s).trim();
+  const mTgl = str.match(/(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})/);
+  const mJam = str.match(/(\d{1,2})[.:](\d{2})/);
+  let tgl = '';
+  if(mTgl){
+    const day = parseInt(mTgl[1],10);
+    const bulan = BULAN_MAP[mTgl[2].toLowerCase()];
+    const year = parseInt(mTgl[3],10);
+    if(bulan) tgl = `${year}-${String(bulan).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+  }
+  let jam = '';
+  if(mJam){
+    jam = `${mJam[1].padStart(2,'0')}:${mJam[2]}`;
+  }
+  return {tgl, jam};
 }
 
 function hitungTelat(t, jam){
@@ -519,15 +530,15 @@ function hitungTelat(t, jam){
 }
 
 function mapRow(row, t){
-  const jam = normalizeJam(pick(row, ['JAM']));
-  const tglRaw = pick(row, ['Tanggal']);
+  const absenSystemRaw = pick(row, ['Tgl Absen System','Tanggal Absen System']);
+  const { tgl, jam } = parseTglJamAbsenSystem(absenSystemRaw);
   const tel = hitungTelat(t, jam);
   return {
     t,
     nama: (pick(row, ['Nama Karyawan']) || '').trim(),
     divisi: (pick(row, ['Divisi / Jabatan','Divisi']) || '').trim(),
     outlet: (pick(row, ['Lokasi Outlet']) || '').trim(),
-    tgl: parseTanggalIndo(tglRaw),
+    tgl,
     jam,
     lat: parseIndoNumber(pick(row, ['Latitude'])),
     lng: parseIndoNumber(pick(row, ['Longtitude','Longitude'])),
