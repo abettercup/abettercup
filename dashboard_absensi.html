@@ -132,6 +132,19 @@
     height:34px;
   }
   #resetBtn:hover{background:var(--roast); color:#fff;}
+  #exportBtn{
+    padding:8px 16px;
+    border-radius:8px;
+    border:1px solid var(--roast);
+    background:var(--roast);
+    color:#fff;
+    font-size:.8rem;
+    font-weight:600;
+    cursor:pointer;
+    height:34px;
+  }
+  #exportBtn:hover{opacity:.85;}
+  #exportBtn:disabled{opacity:.5; cursor:not-allowed;}
 
   main{padding:28px 32px 60px; max-width:1400px; margin:0 auto;}
 
@@ -216,7 +229,7 @@
       gap:10px;
     }
     .field, .field.grow{min-width:100%; flex:1 1 100%;}
-    #resetBtn{width:100%;}
+    #resetBtn, #exportBtn{width:100%;}
     main{padding:18px 14px 40px;}
     .kpi-row{grid-template-columns:1fr 1fr; gap:10px;}
     .kpi-card{padding:14px;}
@@ -369,6 +382,7 @@
     <select id="fNama"><option value="">Semua karyawan</option></select>
   </div>
   <button id="resetBtn">Reset filter</button>
+  <button id="exportBtn">Export ke Excel</button>
 </div>
 
 <main>
@@ -458,6 +472,7 @@
 </main>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
 let RAW_DATA = [];
 
@@ -1116,6 +1131,94 @@ document.getElementById('resetBtn').addEventListener('click', () => {
   refreshDependentOptions();
   renderAll();
 });
+
+// ---------- Export ke Excel ----------
+function exportToExcel(){
+  const data = applyFilters();
+
+  // 1. Top 5 karyawan absensi tidak lengkap
+  const scoped = data.filter(r => r.divisi === 'Barista' || r.divisi === 'Part Timer');
+  const tidakLengkapRows = buildTidakLengkap(scoped);
+  const aggRank = {};
+  tidakLengkapRows.forEach(r => {
+    if(!aggRank[r.nama]) aggRank[r.nama] = {nama:r.nama, divisi:r.divisi, count:0, kotas:{}};
+    aggRank[r.nama].count++;
+    aggRank[r.nama].kotas[r.kota] = (aggRank[r.nama].kotas[r.kota]||0)+1;
+  });
+  scoped.forEach(r => { if(aggRank[r.nama]) aggRank[r.nama].divisi = r.divisi; });
+  let top5 = Object.values(aggRank).map(info => ({
+    nama: info.nama,
+    kota: Object.entries(info.kotas).sort((a,b)=>b[1]-a[1])[0][0],
+    jabatan: info.divisi,
+    keterangan: info.count,
+  }));
+  top5.sort((a,b) => b.keterangan - a.keterangan);
+  top5 = top5.slice(0,5);
+  const sheetTop5 = top5.map((r,i) => ({
+    'No': i+1,
+    'Nama Karyawan': r.nama,
+    'Kota': r.kota,
+    'Jabatan': r.jabatan,
+    'Jumlah Hari Tidak Lengkap': r.keterangan,
+  }));
+
+  // 2. Jam buka outlet (di atas jam 08:00, sama seperti yang tampil di tabel)
+  const jamBukaRows = buildJamBuka(data)
+    .filter(r => r.jam > '08:00')
+    .map(r => ({...r, keterangan: kategoriJamBuka(r.jam)}));
+  const sheetJamBuka = jamBukaRows.map(r => ({
+    'Tanggal': fmtDate(r.tgl),
+    'Nama Outlet': r.outlet,
+    'Jam Buka': r.jam,
+    'Nama Karyawan': r.nama,
+    'Keterangan': r.keterangan,
+  }));
+
+  // 3. Rekap absensi karyawan
+  const absensiRows = buildAbsensiKaryawan(data);
+  const sheetAbsensi = absensiRows.map((r,i) => ({
+    'No': i+1,
+    'Nama': r.nama,
+    'Divisi': r.divisi,
+    'Kota': r.kota,
+    'Absen Masuk': r.masuk,
+    'Absen Keluar': r.keluar,
+    '% Kelengkapan': r.pct + '%',
+    'Keterangan': r.keterangan > 0 ? `${r.keterangan} hari tidak lengkap` : 'Lengkap',
+  }));
+
+  // 4. Detail absensi tidak lengkap
+  const detailRows = buildTidakLengkap(data);
+  const sheetDetail = detailRows.map((r,i) => {
+    const jenis = r.keterangan.includes('keluar') ? 'keluar' : 'masuk';
+    const lokasi = isOutletLokasi(r.outlet) ? 'Outlet' : 'Non Outlet';
+    return {
+      'No': i+1,
+      'Nama Karyawan': r.nama,
+      'Lokasi': lokasi,
+      'Outlet': r.outlet,
+      'Tanggal': fmtDate(r.tgl),
+      'Keterangan': `Tidak absen ${jenis}`,
+    };
+  });
+
+  const wb = XLSX.utils.book_new();
+  const addSheet = (rows, name, emptyMsg) => {
+    const ws = rows.length
+      ? XLSX.utils.json_to_sheet(rows)
+      : XLSX.utils.aoa_to_sheet([[emptyMsg]]);
+    XLSX.utils.book_append_sheet(wb, ws, name);
+  };
+  addSheet(sheetTop5, 'Top 5 Tidak Lengkap', 'Tidak ada data sesuai filter');
+  addSheet(sheetJamBuka, 'Jam Buka Outlet', 'Tidak ada data sesuai filter');
+  addSheet(sheetAbsensi, 'Rekap Absensi Karyawan', 'Tidak ada data sesuai filter');
+  addSheet(sheetDetail, 'Detail Tidak Lengkap', 'Tidak ada data sesuai filter');
+
+  const stamp = new Date().toISOString().slice(0,10);
+  XLSX.writeFile(wb, `Rekap_Absensi_${stamp}.xlsx`);
+}
+
+document.getElementById('exportBtn').addEventListener('click', exportToExcel);
 
 loadData();
 
