@@ -756,7 +756,7 @@
   // published Google Sheet (File > Share > Publish to web > CSV) that now acts
   // as the single source of truth. Editing the sheet on any device updates
   // this URL's content immediately; the dashboard re-fetches it on every load.
-  var SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRJD-Ow0-MZm5XTXehhNEzA6pyrjNPjGqNlijLI34bRTOa9aeHwNg4D-ceOGpELlC2nYKedDmEP7_OA/pub?gid=1093669976&single=true&output=csv";
+  var SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQQ5aD0W4v7Kz2GRwlZxFAN-Q73Lnj5mduCpKFbaPnTFWUP6SzB2sZuJqt5HJN-ENP6Ey-SocQdPJjs/pub?gid=974094984&single=true&output=csv";
   var DEFAULT_SOURCE = "Google Sheets (live)";
 
   var SLOT_VARS = ["--series-1","--series-2","--series-3","--series-4","--series-5","--series-6","--series-7","--series-8"];
@@ -1025,7 +1025,13 @@
         }
       }
       if (!dateKey) return;
-      var netSales = Number(pickField(row, NET_SALES_KEYS)) || 0;
+      // Net Sales in this sheet is exported as a display-formatted string
+      // with thousands separators, e.g. "54,545" or " 1,133,636 " — Number()
+      // chokes on commas and silently returns 0, so strip them first.
+      var netSalesRaw = pickField(row, NET_SALES_KEYS);
+      var netSales = typeof netSalesRaw === "string"
+        ? (Number(netSalesRaw.replace(/,/g, "")) || 0)
+        : (Number(netSalesRaw) || 0);
       var qty = Number(pickField(row, QTY_KEYS)) || 0;
       var receipt = pickField(row, RECEIPT_KEYS);
       if (receipt !== null) sawReceiptColumn = true;
