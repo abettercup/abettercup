@@ -1985,7 +1985,13 @@
     reader.onload = function (evt) {
       try {
         var data = new Uint8Array(evt.target.result);
-        var wb = XLSX.read(data, { type: "array", cellDates: true });
+        // cellDates:false (default) on purpose: with cellDates:true, XLSX.js
+        // converts date cells into JS Date objects using the *device's*
+        // timezone, which shifts the date back by one day for WIB (UTC+7)
+        // devices. Reading dates as raw serial numbers instead avoids that
+        // entirely — normalizeUploadedRows() converts them with pure UTC
+        // epoch math (see the `typeof dateVal === "number"` branch below).
+        var wb = XLSX.read(data, { type: "array" });
         var sheetName = wb.SheetNames.indexOf("Data") >= 0 ? "Data" : wb.SheetNames[0];
         var json = XLSX.utils.sheet_to_json(wb.Sheets[sheetName], { defval: null });
         var rows = normalizeUploadedRows(json);
