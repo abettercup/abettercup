@@ -146,6 +146,28 @@
   #exportBtn:hover{opacity:.85;}
   #exportBtn:disabled{opacity:.5; cursor:not-allowed;}
 
+  /* Pilih cepat: Today / Yesterday */
+  .quick-dates{display:flex; gap:6px;}
+  .quick-dates button{
+    font-family:'IBM Plex Sans', sans-serif;
+    font-size:.8rem;
+    font-weight:600;
+    padding:8px 14px;
+    height:34px;
+    border-radius:8px;
+    border:1px solid var(--line);
+    background:#FDFBF7;
+    color:var(--roast);
+    cursor:pointer;
+  }
+  .quick-dates button:hover{border-color:var(--roast);}
+  .quick-dates button:focus-visible{outline:2px solid var(--steel); outline-offset:1px;}
+  .quick-dates button.active{
+    background:var(--roast);
+    border-color:var(--roast);
+    color:#fff;
+  }
+
   main{padding:28px 32px 60px; max-width:1400px; margin:0 auto;}
 
   /* KPI */
@@ -237,6 +259,8 @@
     }
     .field, .field.grow{min-width:0; flex:none; width:auto;}
     .field.grow{grid-column:1 / -1;}
+    .field.quick{grid-column:1 / -1;}
+    .quick-dates button{flex:1; padding:7px 10px; font-size:.74rem; height:auto;}
     .field label{font-size:.62rem; letter-spacing:.03em;}
     .field select, .field input{
       font-size:.78rem;
@@ -391,6 +415,13 @@
   <div class="field">
     <label for="fSampaiTgl">Sampai tanggal</label>
     <input type="date" id="fSampaiTgl">
+  </div>
+  <div class="field quick">
+    <label>Pilih cepat</label>
+    <div class="quick-dates" id="quickDates">
+      <button type="button" data-quick="today">Today</button>
+      <button type="button" data-quick="yesterday">Yesterday</button>
+    </div>
   </div>
   <div class="field">
     <label for="fKota">Kota</label>
@@ -763,10 +794,14 @@ function init(){
   maxDate = allDates[allDates.length-1];
   document.getElementById('fDariTgl').value = minDate;
   document.getElementById('fSampaiTgl').value = maxDate;
-  document.getElementById('fDariTgl').min = minDate;
-  document.getElementById('fDariTgl').max = maxDate;
-  document.getElementById('fSampaiTgl').min = minDate;
-  document.getElementById('fSampaiTgl').max = maxDate;
+  // batas kalender mencakup Today & Yesterday walau data hari itu belum masuk
+  const hariIni = todayWIB(), kemarin = shiftDate(hariIni, -1);
+  const batasMin = [minDate, kemarin].filter(Boolean).sort()[0];
+  const batasMax = [maxDate, hariIni].filter(Boolean).sort().pop();
+  document.getElementById('fDariTgl').min = batasMin;
+  document.getElementById('fDariTgl').max = batasMax;
+  document.getElementById('fSampaiTgl').min = batasMin;
+  document.getElementById('fSampaiTgl').max = batasMax;
   document.getElementById('periodLabel').textContent = `${fmtDate(minDate)} — ${fmtDate(maxDate)}`;
 
   // fKota, fOutlet, fDivisi options are populated by refreshDependentOptions() below.
@@ -797,6 +832,41 @@ document.getElementById('fBulan').addEventListener('change', (e) => {
   }
   refreshDependentOptions();
   renderAll();
+});
+
+// ---------- Pilih cepat: Today / Yesterday ----------
+// Pakai zona waktu Asia/Jakarta supaya "hari ini" konsisten dengan jam absen (WIB),
+// siapa pun yang membuka dashboard dan di zona waktu mana pun.
+function todayWIB(){
+  return new Date().toLocaleDateString('en-CA', {timeZone:'Asia/Jakarta'}); // YYYY-MM-DD
+}
+function shiftDate(ymd, days){
+  const [y,m,d] = ymd.split('-').map(Number);
+  const dt = new Date(Date.UTC(y, m-1, d + days));
+  return dt.toISOString().slice(0,10);
+}
+function quickDateValue(kind){
+  const today = todayWIB();
+  return kind === 'yesterday' ? shiftDate(today, -1) : today;
+}
+function setQuickDate(kind){
+  const ymd = quickDateValue(kind);
+  document.getElementById('fBulan').value = '';
+  document.getElementById('fDariTgl').value = ymd;
+  document.getElementById('fSampaiTgl').value = ymd;
+  refreshDependentOptions();
+  renderAll();
+}
+function updateQuickActive(){
+  const dari = document.getElementById('fDariTgl').value;
+  const sampai = document.getElementById('fSampaiTgl').value;
+  document.querySelectorAll('#quickDates button').forEach(btn => {
+    const ymd = quickDateValue(btn.dataset.quick);
+    btn.classList.toggle('active', dari === ymd && sampai === ymd);
+  });
+}
+document.querySelectorAll('#quickDates button').forEach(btn => {
+  btn.addEventListener('click', () => setQuickDate(btn.dataset.quick));
 });
 
 function fmtDate(d){
@@ -1231,6 +1301,7 @@ function renderAll(){
   renderJamBukaTable(data);
   renderTidakLengkapTable(data);
   renderRekapTanggalTable(data);
+  updateQuickActive();
 }
 
 ['fDariTgl','fSampaiTgl','fKota','fOutlet','fLokasi','fDivisi','fNama'].forEach(id => {
