@@ -528,7 +528,7 @@
 
   <section class="panel">
     <h2>Rekap absensi per tanggal, per nama karyawan</h2>
-    <div class="panel-desc">Jam Masuk &amp; Jam Keluar diambil dari Tgl Absen System. Jam Kerja dihitung dari Jam Keluar dikurangi Jam Masuk.</div>
+    <div class="panel-desc">Tanggal mengacu ke kolom Tanggal Absen; Jam Masuk &amp; Jam Keluar diambil dari jam pada Tgl Absen System. Jam Kerja dihitung dari Jam Keluar dikurangi Jam Masuk.</div>
     <div class="table-scroll">
       <table id="tblRekapTanggal">
         <thead>
@@ -587,9 +587,10 @@ const BULAN_MAP = {
   juli:7, agustus:8, september:9, oktober:10, november:11, desember:12
 };
 // "Tgl Absen System" / "Tanggal Absen System" berisi tanggal + jam ASLI saat
-// karyawan submit absen, mis. "15 September 2026 pukul 07.53 WIB". Ini sumber
-// yang dipakai untuk tanggal (tgl) & jam absen (jam) — bukan kolom "Tanggal"
-// (yang cuma jadwal tetap jam 07.00) atau kolom "JAM" terpisah.
+// karyawan submit absen, mis. "15 September 2026 pukul 07.53 WIB".
+// PEMBAGIAN SUMBER:
+//   - TANGGAL absen (tgl) -> kolom "Tanggal Absen" (bukan tanggal dari Tgl Absen System)
+//   - JAM absen (jam)     -> jam pada "Tgl Absen System"
 function parseTglJamAbsenSystem(s){
   if(!s) return {tgl:'', jam:''};
   const str = String(s).trim();
@@ -609,6 +610,33 @@ function parseTglJamAbsenSystem(s){
   return {tgl, jam};
 }
 
+// Nama kolom "Tanggal Absen" (dicoba berurutan sampai ada yang terisi)
+const TGL_ABSEN_KEYS = ['Tanggal Absen','Tgl Absen','Tanggal'];
+
+// Baca tanggal dari kolom "Tanggal Absen" -> 'YYYY-MM-DD'. Mendukung:
+// "15 September 2026 ...", "15 Sep 2026", "2026-09-15", "15/09/2026", "15-09-2026".
+function parseTglAbsen(s){
+  if(!s) return '';
+  const str = String(s).trim();
+  const pad = n => String(n).padStart(2,'0');
+  let m = str.match(/(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})/);
+  if(m){
+    const nm = m[2].toLowerCase();
+    let bulan = BULAN_MAP[nm];
+    if(!bulan){
+      const key = Object.keys(BULAN_MAP).find(k => nm.length >= 3 && k.startsWith(nm.slice(0,3)));
+      bulan = key ? BULAN_MAP[key] : 0;
+    }
+    if(bulan) return `${m[3]}-${pad(bulan)}-${pad(parseInt(m[1],10))}`;
+  }
+  m = str.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+  if(m) return `${m[1]}-${pad(m[2])}-${pad(m[3])}`;
+  m = str.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{4})/); // format Indonesia: hari/bulan/tahun
+  if(m) return `${m[3]}-${pad(m[2])}-${pad(m[1])}`;
+  return '';
+}
+
+let _warnedTglAbsen = false;
 function hitungTelat(t, jam){
   if(!jam) return {telat:false, menit_telat:0};
   const [h,mn] = jam.split(':').map(Number);
@@ -626,7 +654,14 @@ function hitungTelat(t, jam){
 
 function mapRow(row, t){
   const absenSystemRaw = pick(row, ['Tgl Absen System','Tanggal Absen System']);
-  const { tgl, jam } = parseTglJamAbsenSystem(absenSystemRaw);
+  const sys = parseTglJamAbsenSystem(absenSystemRaw);
+  const jam = sys.jam;                       // jam: dari Tgl Absen System
+  const tglAbsen = parseTglAbsen(pick(row, TGL_ABSEN_KEYS));
+  if(!tglAbsen && !_warnedTglAbsen){
+    _warnedTglAbsen = true;
+    console.warn('Kolom "Tanggal Absen" tidak terbaca; sementara memakai tanggal dari Tgl Absen System. Cek nama kolom di sheet.');
+  }
+  const tgl = tglAbsen || sys.tgl;           // tanggal: dari Tanggal Absen (fallback ke system)
   const tel = hitungTelat(t, jam);
   return {
     t,
