@@ -528,7 +528,7 @@
 
   <section class="panel">
     <h2>Rekap absensi per tanggal, per nama karyawan</h2>
-    <div class="panel-desc">Tanggal mengacu ke kolom Tanggal Absen; Jam Masuk &amp; Jam Keluar diambil dari jam pada Tgl Absen System. Jam Kerja dihitung dari Jam Keluar dikurangi Jam Masuk.</div>
+    <div class="panel-desc">Tanggal mengacu ke kolom Tanggal Absen; Jam Masuk &amp; Jam Keluar diambil dari jam pada Tgl Absen System. Jam Kerja dihitung dari selisih waktu (tanggal &amp; jam) absen keluar dan masuk pada Tgl Absen System.</div>
     <div class="table-scroll">
       <table id="tblRekapTanggal">
         <thead>
@@ -670,6 +670,8 @@ function mapRow(row, t){
     outlet: (pick(row, ['Lokasi Outlet']) || '').trim(),
     tgl,
     jam,
+    // waktu penuh dari Tgl Absen System (menit sejak epoch) — dipakai untuk Jam Kerja
+    ts: (sys.tgl && sys.jam) ? Math.floor(Date.UTC(+sys.tgl.slice(0,4), +sys.tgl.slice(5,7)-1, +sys.tgl.slice(8,10), +sys.jam.slice(0,2), +sys.jam.slice(3,5))/60000) : null,
     lat: parseIndoNumber(pick(row, ['Latitude'])),
     lng: parseIndoNumber(pick(row, ['Longtitude','Longitude'])),
     alamat: pick(row, ['Lokasi Absensi (alamat terdekat)','Lokasi Absensi (alamat Terdekat)','Lokasi Absensi']),
@@ -1178,11 +1180,11 @@ function buildTidakLengkap(data){
   return rows;
 }
 
-function hitungJamKerja(jamMasuk, jamKeluar){
-  if(!jamMasuk || !jamKeluar) return '';
-  const [h1,m1] = jamMasuk.split(':').map(Number);
-  const [h2,m2] = jamKeluar.split(':').map(Number);
-  let totalMenit = (h2*60+m2) - (h1*60+m1);
+// Jam Kerja = selisih waktu (tanggal + jam) pada Tgl Absen System antara absen keluar dan masuk.
+// Karena tanggal ikut dihitung, shift yang pulang lewat tengah malam tetap benar.
+function hitungJamKerja(tsMasuk, tsKeluar){
+  if(tsMasuk == null || tsKeluar == null) return '';
+  const totalMenit = tsKeluar - tsMasuk;
   if(totalMenit < 0) return '';
   const jam = Math.floor(totalMenit/60);
   const menit = totalMenit % 60;
@@ -1195,12 +1197,12 @@ function buildRekapTanggal(data){
     const key = r.nama + '||' + r.tgl;
     if(!map[key]) map[key] = {
       tgl:r.tgl, nama:r.nama, divisi:'', kotaMasuk:'', kotaKeluar:'',
-      outletMasuk:'', outletKeluar:'', jamMasuk:'', jamKeluar:''
+      outletMasuk:'', outletKeluar:'', jamMasuk:'', jamKeluar:'', tsMasuk:null, tsKeluar:null
     };
     const rec = map[key];
     rec.divisi = r.divisi;
-    if(r.t === 'masuk'){ rec.jamMasuk = r.jam; rec.outletMasuk = r.outlet; rec.kotaMasuk = r.kota_norm; }
-    else { rec.jamKeluar = r.jam; rec.outletKeluar = r.outlet; rec.kotaKeluar = r.kota_norm; }
+    if(r.t === 'masuk'){ rec.jamMasuk = r.jam; rec.tsMasuk = r.ts; rec.outletMasuk = r.outlet; rec.kotaMasuk = r.kota_norm; }
+    else { rec.jamKeluar = r.jam; rec.tsKeluar = r.ts; rec.outletKeluar = r.outlet; rec.kotaKeluar = r.kota_norm; }
   });
   return Object.values(map).map(rec => ({
     tgl: rec.tgl,
@@ -1210,7 +1212,7 @@ function buildRekapTanggal(data){
     outlet: rec.outletMasuk || rec.outletKeluar,
     jamMasuk: rec.jamMasuk,
     jamKeluar: rec.jamKeluar,
-    jamKerja: hitungJamKerja(rec.jamMasuk, rec.jamKeluar),
+    jamKerja: hitungJamKerja(rec.tsMasuk, rec.tsKeluar),
   }));
 }
 
