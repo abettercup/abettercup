@@ -681,6 +681,8 @@
 
   <div class="filterbar" id="filterBar">
     <div class="seg" id="dateSeg" role="group" aria-label="Rentang tanggal">
+      <button data-preset="today" aria-pressed="false">Hari Ini</button>
+      <button data-preset="yesterday" aria-pressed="false">Kemarin</button>
       <button data-preset="7" aria-pressed="false">7 Hari</button>
       <button data-preset="30" aria-pressed="false">30 Hari</button>
       <button data-preset="all" aria-pressed="true">Semua</button>
@@ -826,6 +828,16 @@
     dt.setUTCDate(dt.getUTCDate() + days);
     return dt.toISOString().slice(0, 10);
   }
+  // "Hari Ini" / "Kemarin" must match the viewer's actual local calendar
+  // day (device timezone), unlike the rest of the date math which is
+  // intentionally UTC-based to avoid re-introducing the WIB off-by-one bug
+  // when parsing stored dates. Here there's no stored date to parse — we
+  // just need "what day is it right now, where the viewer is".
+  function todayLocalKey() {
+    var d = new Date();
+    return d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate());
+  }
+  function pad2(n) { return n < 10 ? "0" + n : String(n); }
   function dayCount(start, end) {
     var a = new Date(start + "T00:00:00Z"), b = new Date(end + "T00:00:00Z");
     return Math.round((b - a) / 86400000) + 1;
@@ -1088,6 +1100,14 @@
 
   /* ============ filtering & derived state ============ */
   function currentRange() {
+    if (state.preset === "today") {
+      var t = todayLocalKey();
+      return [t, t];
+    }
+    if (state.preset === "yesterday") {
+      var y = shiftDate(todayLocalKey(), -1);
+      return [y, y];
+    }
     if (state.preset === "7") {
       var end7 = state.maxDate, start7 = shiftDate(end7, -6);
       if (start7 < state.minDate) start7 = state.minDate;
